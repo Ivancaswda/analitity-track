@@ -54,7 +54,7 @@
         RefParams
 
     }
-    fetch('http://localhost:3000' + "/api/track", {
+    fetch('https://analitity-track.vercel.app' + "/api/track", {
         method: 'POST',
         headers: {
             "Content-Type": 'application/json'
@@ -71,7 +71,7 @@
         const exitTime = Date.now();
         totalActiveTime += Date.now()-activeStartTime;
 
-        fetch('http://localhost:3000/api/track', {
+        fetch('https://analitity-track.vercel.app/api/track', {
             method: 'POST',
             keepalive: true,
             headers: {
@@ -92,7 +92,7 @@
     window.addEventListener('beforeunload', handleExit)
 
     const sendLivePing = () => {
-        fetch('http://localhost:3000/api/live/create', {
+        fetch('https://analitity-track.vercel.app/api/live/create', {
             method: 'POST',
             headers: {'Content-Type': "application/json"},
             body: JSON.stringify({
