@@ -35,6 +35,10 @@ const Header = () => {
                     <li className='hover:text-primary transtion-all cursor-pointer'>Главная страница</li>
 
                 </Link>
+                <Link href={"/dashboard"}>
+                    <li className='hover:text-primary transtion-all cursor-pointer'>Панель управления</li>
+
+                </Link>
                 <Link href={'/pricing'}>
                     <li className='hover:text-primary transtion-all cursor-pointer'>Услуги</li>
                 </Link>

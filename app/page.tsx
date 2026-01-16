@@ -66,7 +66,7 @@ const testimonials = [
 ];
 
 const yandexData = [
-    { month: "Янв", visitors: 1200 },
+    { month: "Янв", visitors: 900 },
     { month: "Фев", visitors: 1350 },
     { month: "Мар", visitors: 1100 },
     { month: "Апр", visitors: 1500 },
@@ -124,6 +124,9 @@ const HomePage = () => {
                             <Link href="/">
                                 <li className="hover:text-primary transition-all cursor-pointer">Главная</li>
                             </Link>
+                            <Link href="/dashboard">
+                                <li className="hover:text-primary transition-all cursor-pointer">Панель управления</li>
+                            </Link>
                             <Link href="/pricing">
                                 <li className="hover:text-primary transition-all cursor-pointer">Услуги</li>
                             </Link>
@@ -166,6 +169,56 @@ const HomePage = () => {
                     </div>
 
                     <Hero />
+
+                    {user?.isPremium === 1 && (
+                        <div className="relative my-12 w-full max-w-7xl mx-auto rounded-3xl overflow-hidden p-6">
+                            {/* Анимированный фон */}
+                            <div
+                                className="absolute inset-0 animate-gradient-xy bg-primary rounded-xl opacity-70 blur-3xl"
+                                style={{
+                                    zIndex: 0,
+                                    backgroundSize: "300% 300%",
+                                }}
+                            ></div>
+
+                            {/* Контент баннера */}
+                            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 text-white">
+                                <div>
+                                    <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+                                        ✨ Premium активен!
+                                    </h2>
+                                    <p className="mt-2 text-lg opacity-90">
+                                        Наслаждайтесь безлимитными возможностями аналитики и отслеживанием сайтом с Analytity
+                                    </p>
+                                </div>
+                                <div className="flex gap-4">
+                                    <Button className="px-6 py-3 bg-white/20 backdrop-blur-md rounded-xl font-semibold hover:bg-white/30 transition">
+                                        Прикрепить новый сайт
+                                    </Button>
+                                    <Button className="px-6 py-3 border border-white/30 rounded-xl font-semibold hover:bg-white/10 transition">
+                                        Подробнее о Premium
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <style jsx>{`
+      @keyframes gradientXY {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      .animate-gradient-xy {
+        animation: gradientXY 8s ease infinite;
+      }
+    `}</style>
+                        </div>
+                    )}
 
                     <div className="h-[40rem] rounded-md flex flex-col antialiased bg-white dark:bg-black dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
                         <InfiniteMovingCards items={testimonials} direction="left" speed="slow" />

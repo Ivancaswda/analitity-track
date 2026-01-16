@@ -6,6 +6,7 @@ import {Toaster} from "@/components/ui/sonner";
 import Script from "next/script"
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import {GoogleOAuthProvider} from "@react-oauth/google";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -40,9 +41,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased w-screen h-screen`}
       >
       <AuthProvider>
+          <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID!} >
 
-          {children}
-          <Footer/>
+              {children}
+              <Footer/>
+          </GoogleOAuthProvider>
       </AuthProvider>
        <Toaster/>
       </body>

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { FaGoogle } from "react-icons/fa";
 import { Loader2Icon } from "lucide-react";
 import axios from "axios";
+import {GoogleLoginButton} from "@/app/(auth)/_components/GoogleLoginButton";
 
 export default function SignUpForm() {
     const { user, loading, setUser } = useAuth();
@@ -136,15 +137,7 @@ export default function SignUpForm() {
                             Зарегистрироваться
                         </button>
 
-                        <div className='flex items-center gap-2 justify-center'>
-                            <Button
-                                type="button"
-                                className="w-full py-2 flex items-center justify-center gap-4 text-black bg-white rounded-md hover:bg-gray-200 transition"
-                            >
-                                <FaGoogle />
-                                <span>Зарегистрироваться через Google</span>
-                            </Button>
-                        </div>
+                        <GoogleLoginButton/>
 
                         <p className="text-gray-400 text-center">
                             Уже есть аккаунт? <a href="/sign-in" className="text-primary hover:underline">Войти</a>

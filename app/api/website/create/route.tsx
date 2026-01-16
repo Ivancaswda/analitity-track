@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
             .where(eq(websitesTable.userEmail, user.email));
 
 
-        if (!user.isPremium && userWebsites.length >= 3) {
+        if (user.isPremium === 0 && userWebsites.length >= 3) {
             return NextResponse.json(
                 { error: "WEBSITE_LIMIT_REACHED" },
                 { status: 403 }
