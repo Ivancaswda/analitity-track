@@ -41,7 +41,7 @@ const SettingsPage = () => {
     }
     console.log(user)
     const script = `<script defer\n  data-website-id=\"${websiteId}\"\n  data-domain=\"https://${websiteDetail?.domain}\"\n
-  src=\"http://localhost:3000/analytics.js\">\n
+  src=\"https://analytity-track.vercel.app/analytics.js\">\n
 </script>`
     const copyScript = async () => {
         await navigator.clipboard.writeText(script)

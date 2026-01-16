@@ -1,7 +1,7 @@
 // public/analytics.js
 (function (){
     console.log('Скрипт для аналитики загружен!')
-    const NODE_ENV ='development'
+    const NODE_ENV ='production'
     function generateUUID() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 9)
     }

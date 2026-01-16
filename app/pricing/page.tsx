@@ -1,17 +1,41 @@
 'use client'
 
-import React from "react"
+import React, {useState} from "react"
 import { CheckIcon, SparklesIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Header from "@/components/Header";
 import Image from "next/image";
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/context/useAuth";
+import {toast} from "sonner";
+import axios from "axios";
 
 
 const PricingPage = () => {
     const router =useRouter()
     const {user}  = useAuth()
+    console.log(user)
+    const [loading, setLoading]  =useState<boolean>()
+    const onCreateCheckout = async () => {
+        try {
+            setLoading(true)
+            const res = await axios.post("/api/stripe/create-checkout", {userEmail: user?.email});
+
+            const data = await res.data;
+
+            if (!data.url) {
+                alert("Stripe session error");
+                return;
+            }
+            setLoading(false)
+            window.location.href = data.url;
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+            toast.error('Не удалось создать оплату!')
+        }
+
+    }
     return (
         <div className="relative min-h-screen w-full   overflow-hidden">
 
@@ -120,25 +144,11 @@ const PricingPage = () => {
                             {user?.isPremium ?   <Button variant="outline" className="w-full ">
                                 текущий тариф
                             </Button> :    <Button
-                                onClick={async () => {
-                                    const res = await fetch("/api/stripe/create-checkout", {
-                                        method: "POST",
-                                        headers: { "Content-Type": "application/json" },
-                                        body: JSON.stringify({ userEmail: user?.email }),
-                                    });
-
-                                    const data = await res.json();
-
-                                    if (!data.url) {
-                                        alert("Stripe session error");
-                                        return;
-                                    }
-
-                                    window.location.href = data.url;
-                                }}
+                                onClick={onCreateCheckout}
                                 className="bg-primary text-primary-foreground"
                             >
-                                ✨ Получить Premium — 199 ₽
+                                {loading? 'Загрузка...' : "✨ Получить Premium — 199 ₽"}
+
                             </Button>}
                         </div>
                     </div>

@@ -50,8 +50,8 @@ export async function POST(req: Request) {
         metadata: {
             userId: String(user.id),
         },
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/premium/success`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
+        success_url: `https://analytity-track.vercel.app/premium/success`,
+        cancel_url: `https://analytity-track.vercel.app/pricing`,
     });
 
     return NextResponse.json({ url: session.url });

@@ -13,7 +13,7 @@ export default function InstallScriptPage() {
     const websiteId = searchParams.get("websiteId")
     const domain = searchParams.get("domain")
 
-    const script = `<script defer\n  data-website-id=\"${websiteId}\"\n  data-domain=\"https://${domain}\"\n  src=\"http://localhost:3000/analytics.js\">\n</script>`
+    const script = `<script defer\n  data-website-id=\"${websiteId}\"\n  data-domain=\"https://${domain}\"\n  src=\"https://analytity-track.vercel.app/analytics.js\">\n</script>`
 
     const copyScript = async () => {
         await navigator.clipboard.writeText(script)
