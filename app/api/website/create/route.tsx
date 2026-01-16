@@ -10,6 +10,25 @@ export async function POST(req: NextRequest) {
         const {websiteId, domain, timeZone, enableLocalhostTracking} = await req.json()
 
 
+        if (!user) {
+            return NextResponse.json({error: 'unauth'}, {status: 400})
+        }
+
+
+
+        const userWebsites = await db
+            .select()
+            .from(websitesTable)
+            .where(eq(websitesTable.userEmail, user.email));
+
+
+        if (!user.isPremium && userWebsites.length >= 3) {
+            return NextResponse.json(
+                { error: "WEBSITE_LIMIT_REACHED" },
+                { status: 403 }
+            );
+        }
+
 
         const existingDomain = await db.select().from(websitesTable).where(
            and(eq(websitesTable.domain, domain), eq(websitesTable.userEmail, user?.email)))

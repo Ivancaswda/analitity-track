@@ -15,7 +15,7 @@ export default function Footer() {
     ];
 
     return (
-        <footer className="bg-gray-900 text-gray-300 pt-16 pb-8 relative overflow-hidden">
+        <footer className="bg-gray-900 mt-10 text-gray-300 pt-16 pb-8 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-48 bg-yellow-500/10 -z-10 rounded-b-full" />
 
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">

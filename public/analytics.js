@@ -53,7 +53,7 @@
         utm_campaign,
         refParams
     }
-    fetch(NODE_ENV === 'production' ? 'https://analitity-track.vercel.app' : 'http://localhost:3000' + "/api/track", {
+    fetch(NODE_ENV === 'production' ? 'https://analytity-track.vercel.app' : 'http://localhost:3000' + "/api/track", {
         method: 'POST',
         headers: {
             "Content-Type": 'application/json'
@@ -70,7 +70,7 @@
         const exitTime = Date.now();
         totalActiveTime += Date.now()-activeStartTime;
 
-        fetch(NODE_ENV === 'production' ? 'https://analitity-track.vercel.app' : 'http://localhost:3000' +'/api/track', {
+        fetch(NODE_ENV === 'production' ? 'https://analytity-track.vercel.app' : 'http://localhost:3000' +'/api/track', {
             method: 'POST',
             keepalive: true,
             headers: {
@@ -91,7 +91,7 @@
     window.addEventListener('beforeunload', handleExit)
 
     const sendLivePing = () => {
-        fetch(NODE_ENV === 'production' ? 'https://analitity-track.vercel.app' : 'http://localhost:3000' +'/api/track', {
+        fetch(NODE_ENV === 'production' ? 'https://analytity-track.vercel.app' : 'http://localhost:3000' +'/api/track', {
             method: 'POST',
             headers: {'Content-Type': "application/json"},
             body: JSON.stringify({

@@ -121,6 +121,11 @@ const Hero = () => {
             setLoading(false)
         } catch (error) {
             setLoading(false)
+            if (error.response?.data?.error === "WEBSITE_LIMIT_REACHED") {
+                toast.error("Доступно только 3 сайта. Перейдите на Premium 🚀");
+                router.push("/pricing");
+                return;
+            }
             toast.error('Ошибка при создании!')
             console.log(error)
         }
