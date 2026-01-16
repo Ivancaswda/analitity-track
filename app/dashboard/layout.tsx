@@ -4,6 +4,7 @@ import DashboardProvider from "@/app/dashboard/provider";
 import {useAuth} from "@/context/useAuth";
 import {LoaderOne} from "@/components/ui/loader";
 import {useRouter} from "next/navigation";
+import Header from "@/components/Header";
 
 const DashboardLayout = ({children}:any) => {
     const {user, loading}  =useAuth()
@@ -15,12 +16,13 @@ const DashboardLayout = ({children}:any) => {
     }, [user, loading, router]);
 
     if (loading && !user) {
-        return  <div className='flex items-center justify-center w-screen min-h-[96vh]'>
+        return  <div className='flex items-center justify-center w-screen ' style={{height: '96vh'}}>
             <LoaderOne/>
         </div>
     }
     return (
         <DashboardProvider>
+            <Header/>
             {children}
         </DashboardProvider>
     )

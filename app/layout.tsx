@@ -4,6 +4,8 @@ import "./globals.css";
 import {AuthProvider} from "@/context/AuthProvider";
 import {Toaster} from "@/components/ui/sonner";
 import Script from "next/script"
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,17 +30,19 @@ export default function RootLayout({
     <html lang="en">
         <head>
             <script defer
-                    data-website-id="b12e8a7e-40f8-428a-975c-f340cb73a61a"
+                    data-website-id="0fc0774d-93c5-408f-a120-562936a67bc6"
                     data-domain="https://localhost:3000"
                     src="http://localhost:3000/analytics.js">
             </script>
         </head>
 
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased w-screen h-screen`}
       >
       <AuthProvider>
+
           {children}
+          <Footer/>
       </AuthProvider>
        <Toaster/>
       </body>

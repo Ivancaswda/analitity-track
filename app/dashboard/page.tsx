@@ -54,33 +54,38 @@ const DashboardPage = () => {
                 </Link>
             </div>
             <div>
-                {websiteList?.length === 0 ?
-                <div className='p-8 border border-dashed gap-4 flex flex-col justify-center items-center'>
-                   <PictureInPictureIcon className='w-[100px] h-[100px]'/>
-                    <h2 className='font-bold'>У вас нету пока вебсайтов для отслеживания</h2>
-                    <Link href="/dashboard/new" >
-                        <Button className='px-6! cursor-pointer hover:scale-105 transition py-6! text-lg'>
-                            <PlusIcon/> вебсайт
-                        </Button>
-                    </Link>
-
-                </div> : isLoading ? <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5'>
-
-                        {[1,2,3,4,5].map((website, index) => (
-                            <div key={index} className='p-4'>
-                                <div className='flex gap-2 items-center'>
-                                    <Skeleton className='w-8 h-8 rounded-sm'/>
-                                    <Skeleton className='w-1/2 rounded-sm h-8'/>
+                {isLoading ? (
+                    <div className="flex flex-wrap gap-5">
+                        {[1, 2, 3, 4, 5].map((_, index) => (
+                            <div key={index} className="p-4 w-[200px] h-[200px]">
+                                <div className="flex gap-2 items-center">
+                                    <Skeleton className="w-8 h-8 rounded-sm" />
+                                    <Skeleton className="w-1/2 h-8 rounded-sm" />
                                 </div>
 
-                                <Skeleton className='h-[80px] w-full mt-4'/>
+                                <Skeleton className="h-[80px] w-full mt-4" />
                             </div>
                         ))}
-                    </div> : <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mt-5">
+                    </div>
+                ) : websiteList.length === 0 ? (
+                    <div className="p-8 border border-dashed gap-4 flex flex-col justify-center items-center">
+                        <PictureInPictureIcon className="w-[100px] h-[100px]" />
+                        <h2 className="font-bold">
+                            У вас нету пока вебсайтов для отслеживания
+                        </h2>
+                        <Link href="/dashboard/new">
+                            <Button className="px-6 py-6 text-lg transition hover:scale-105">
+                                <PlusIcon /> вебсайт
+                            </Button>
+                        </Link>
+                    </div>
+                ) : (
+                    <div className="flex flex-wrap gap-6 mt-5">
                         {websiteList.map((website, index) => (
-                            <WebsiteCard website={website} key={index} />
+                            <WebsiteCard website={website} key={website.id ?? index} />
                         ))}
-                    </div>}
+                    </div>
+                )}
             </div>
         </div>
     )

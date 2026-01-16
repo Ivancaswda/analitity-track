@@ -52,7 +52,20 @@ const FormInput = ({website, setFormData}:any) => {
             toDate: date?.to ?? date?.from
         })
     }, [date, analyticType]);
+    const [refreshKey, setRefreshKey] = useState(0) // 👈 ВАЖНО
 
+    const handleRefresh = () => {
+        setRefreshKey(prev => prev + 1)
+    }
+
+    useEffect(() => {
+        setFormData({
+            analyticType,
+            fromDate: date?.from,
+            toDate: date?.to ?? date?.from,
+            refreshKey, // 👈 ТРИГГЕР
+        })
+    }, [date, analyticType, refreshKey])
 
 
     return (
@@ -80,13 +93,13 @@ const FormInput = ({website, setFormData}:any) => {
 
                 <Popover>
                     <PopoverTrigger asChild={true} >
-                        <Button variant='outline' data-empty={!date} className={` ${date.to ? 'w-[380px]' : 'w-[240px]'} data-[empty=true]:text-muted-foreground flex-wrap flex-1`}>
+                        <Button variant='outline' data-empty={!date} className={` ${date.to ? 'w-[380px]' : 'w-[140px]'} data-[empty=true]:text-muted-foreground flex-wrap flex-1`}>
                             <CalendarIcon/>
                             {date?.from ? (
                                 date?.to ? (<>
-                                    {format(date?.from, "PPP")} - {format(date?.to, "PPP")}
+                                    {format(date?.from, "PPP", {locale: ru})} - {format(date?.to, "PPP", {locale: ru})}
                                 </>) : <>
-                                    {format(date?.from, "PPP")}
+                                    {format(date?.from, "PPP", {locale: ru})}
                                 </>
                             ) : <span>Выберите дату</span> }
 
@@ -96,7 +109,7 @@ const FormInput = ({website, setFormData}:any) => {
                     </PopoverTrigger>
                     <PopoverContent className='w-auto p-8'>
 
-                        <div className='flex justify-between my-4 items-center mx-2'>
+                        <div className='flex justify-between gap-10 my-4 items-center mx-2'>
                             <Button onClick={handleToday} variant='outline'>
                                 Сегодня
                             </Button>
@@ -104,7 +117,7 @@ const FormInput = ({website, setFormData}:any) => {
                                 Сбросить
                             </Button>
                         </div>
-                        <Calendar onSelect={handleDateChange}  mode='range' selected={date} className='w-[200px]'/>
+                        <Calendar onSelect={handleDateChange}  mode='range' selected={date} className='w-[300px]'/>
 
                     </PopoverContent>
                 </Popover>
@@ -127,7 +140,7 @@ const FormInput = ({website, setFormData}:any) => {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button variant='outline'>
+                <Button onClick={handleRefresh} variant='outline'>
                     <RefreshCcw/>
                 </Button>
             </div>

@@ -6,16 +6,17 @@ import {and, eq, gt} from "drizzle-orm";
 export async function GET(req: NextRequest) {
     try {
         const websiteId = await req.nextUrl.searchParams.get('websiteId');
-        const now = Date.now();
+        const now = new Date()
+
         const activeUsers = await db
             .select()
             .from(liveUserTable)
             .where(
                 and(
-                    gt(liveUserTable.last_seen, now - 30_000),
+                    gt(liveUserTable.last_seen, new Date(now.getTime() - 30_000)),
                     eq(liveUserTable.websiteId, websiteId)
                 )
-            );
+            )
 
         return  NextResponse.json({activeUsers: activeUsers})
 

@@ -35,36 +35,39 @@ export async function POST(req: NextRequest) {
         const ip = req.headers.get('x-forwarded-for')?.split(',')[0]
          || req.headers.get('x-real-ip') || "71.71.22.54"
 
-        const geoRes = await fetch(`http://ip-api.com/json/${ip}`)
+        const geoRes = await fetch(`http://ip-api.com/json/71.71.22.54`)
         const geoInfo = await geoRes.json()
+        const now = new Date()
 
-        await db.insert(liveUserTable).values({
-            visitorId,
-            websiteId,
-            last_seen,
-            city: geoInfo.city || '',
-            country: geoInfo.country || '',
-            countryCode: geoInfo.countryCode || '',
-            lat: geoInfo.lat?.toString() || '',
-            lng: geoInfo.lon?.toString() || "",
-            device: deviceType,
-            os: osInfo,
-            browser: browserInfo
-        }).onConflictDoUpdate({
-            target: liveUserTable.visitorId,
-            set: {
-
-                last_seen,
+        await db
+            .insert(liveUserTable)
+            .values({
+                visitorId,
+                websiteId,
+                last_seen: now,
                 city: geoInfo.city || '',
                 country: geoInfo.country || '',
                 countryCode: geoInfo.countryCode || '',
                 lat: geoInfo.lat?.toString() || '',
-                lng: geoInfo.lon?.toString() || "",
-                device: deviceType || '',
+                lng: geoInfo.lon?.toString() || '',
+                device: deviceType,
                 os: osInfo,
-                browser: browserInfo
-            }
-        })
+                browser: browserInfo,
+            })
+            .onConflictDoUpdate({
+                target: liveUserTable.visitorId,
+                set: {
+                    last_seen: now,
+                    city: geoInfo.city || '',
+                    country: geoInfo.country || '',
+                    countryCode: geoInfo.countryCode || '',
+                    lat: geoInfo.lat?.toString() || '',
+                    lng: geoInfo.lon?.toString() || '',
+                    device: deviceType,
+                    os: osInfo,
+                    browser: browserInfo,
+                },
+            })
         return NextResponse.json({status: "ok"}, {headers: CORS_HEADERS})
 
 

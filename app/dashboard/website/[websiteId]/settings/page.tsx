@@ -1,7 +1,7 @@
 "use client"
 import React, {useEffect, useState} from 'react'
 import {ArrowLeft, Copy, Loader2Icon, TrashIcon} from "lucide-react";
-import {useParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import axios from "axios";
 import {toast} from "sonner";
 import {Button} from "@/components/ui/button";
@@ -17,11 +17,12 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
-import {router} from "next/client";
+
 
 const SettingsPage = () => {
     const {websiteId} = useParams()
     const {user} = useAuth()
+    const router = useRouter()
     const [websiteDomain, setWebsiteDomain] = useState<string>()
     const [websiteDetail, setWebsiteDetail] = useState<any>()
     const [loading, setLoading] = useState<boolean>(false)
@@ -40,7 +41,7 @@ const SettingsPage = () => {
     }
     console.log(user)
     const script = `<script defer\n  data-website-id=\"${websiteId}\"\n  data-domain=\"https://${websiteDetail?.domain}\"\n
-  src=\"https://analitity-track.vercel.app/analytics.js\">\n
+  src=\"http://localhost:3000/analytics.js\">\n
 </script>`
     const copyScript = async () => {
         await navigator.clipboard.writeText(script)
@@ -50,7 +51,8 @@ const SettingsPage = () => {
     const onDeleteWebsite = async () => {
         try {
             setLoading(true)
-            const result = await axios.delete('/api/website/remove', {websiteId: websiteId})
+            const result = await axios.delete(`/api/website/remove?websiteId=${websiteId}`,
+                )
             if (result.data.ok) {
                 toast.success('Вебсайт успешно удалён!')
                 router.replace('/dashboard')
@@ -67,7 +69,7 @@ const SettingsPage = () => {
     }
     return (
         <div className='px-10 py-6 space-y-5 gap-6'>
-            <Button className=''>
+            <Button onClick={() => router.replace(`/dashboard/website/${websiteId}`)} className=''>
                 <ArrowLeft/> Назад
             </Button>
             <h2 className='text-3xl font-semibold '>Настройки для </h2>
@@ -84,7 +86,7 @@ const SettingsPage = () => {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className=" bg-primary/40 text-zinc-100 rounded-lg p-4 text-sm font-mono">
+                            <div className=" bg-primary/10 text-black rounded-lg p-4 text-sm font-mono">
                                 <pre className="whitespace-pre-wrap">{script}</pre>
 
                                 <Button
@@ -121,6 +123,9 @@ const SettingsPage = () => {
                             <CardTitle>
                                 Осторожно!
                             </CardTitle>
+                            <CardDescription>
+                                Это действия нельзя будет вернуть! Это действия нельзя будет вернуть!
+                            </CardDescription>
                         </CardHeader>
                         <Separator/>
                         <CardContent>

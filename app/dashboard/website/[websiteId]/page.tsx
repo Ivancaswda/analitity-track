@@ -67,8 +67,12 @@ toast.error('failed to get website')
             toast.error('failed to get live users')
         }
     }
+    console.log('liveUsers===')
     console.log(liveUsers)
 
+
+    console.log('websiteInfo===')
+    console.log(websiteInfo)
     return (
         <div className='px-10 md:px-14 lg:px-16 xl:px-16 mt-10 flex flex-col gap-4'>
             <FormInput setFormData={setFormData} website={websites}/>

@@ -8,6 +8,7 @@ export const usersTable = pgTable("users", {
     avatarUrl: varchar(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     isPremium: integer().default(0),
+    stripeCustomerId: varchar()
 });
 export const websitesTable = pgTable('websites', {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),

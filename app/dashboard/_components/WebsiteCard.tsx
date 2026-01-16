@@ -1,5 +1,5 @@
-import React from "react"
-import { GlobeIcon, TrendingUp } from "lucide-react"
+import React, {useState} from "react"
+import {GlobeIcon, TrendingUp, UsersIcon} from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import {
     Area,
@@ -13,6 +13,7 @@ import {
     type ChartConfig,
 } from "@/components/ui/chart"
 import Link from "next/link";
+import {Button} from "@/components/ui/button";
 
 /* ---------------- CONFIG ---------------- */
 
@@ -27,10 +28,13 @@ const chartConfig = {
 
 function build24hChart(hourly: any[] = []) {
     const now = new Date()
+
+    // ключ: YYYY-MM-DD-HH
     const map = new Map<string, number>()
 
     hourly.forEach(h => {
-        map.set(h.hourLabel, h.count)
+        const key = `${h.date}-${h.hour}`
+        map.set(key, h.count)
     })
 
     const data: { hour: string; visitors: number }[] = []
@@ -39,35 +43,13 @@ function build24hChart(hourly: any[] = []) {
         const d = new Date(now)
         d.setHours(now.getHours() - i)
 
+        const date = d.toISOString().slice(0, 10) // YYYY-MM-DD
         const hour = d.getHours()
-        const label = `${hour}:00`
+        const key = `${date}-${hour}`
 
         data.push({
-            hour: label,
-            visitors: map.get(label) ?? 0,
-        })
-    }
-
-    const active = data.filter(d => d.visitors > 0)
-
-    // 🔥 ЕСЛИ МАЛО ДАННЫХ — РИСУЕМ КРАСИВУЮ ЛИНИЮ
-    if (active.length <= 1) {
-        const base =
-            active[0]?.visitors
-                ? Math.max(1, Math.floor(active[0].visitors / 2))
-                : 1
-
-        return data.map((d, index) => {
-            // лёгкая волна, чтобы линия не была плоской
-            const wave = Math.sin(index / 3) * base * 0.3
-
-            return {
-                hour: d.hour,
-                visitors: Math.max(
-                    d.visitors,
-                    Math.round(base + wave)
-                ),
-            }
+            hour: `${hour}:00`,
+            visitors: map.get(key) ?? 0,
         })
     }
 
@@ -77,13 +59,23 @@ function build24hChart(hourly: any[] = []) {
 
 
 const WebsiteCard = ({ website }: any) => {
+    const [mode, setMode] = useState<"hourly" | "daily">("hourly")
 
-
-    const chartData = build24hChart(website.hourly)
+    const chartData =
+        mode === "hourly"
+            ? build24hChart(website.hourly)
+            : website.daily?.map((d: any) => ({
+            hour: d.date.slice(5), // MM-DD
+            visitors: d.visitors,
+        })) ?? []
+    console.log('chartData===')
     console.log(chartData)
+
+    console.log('hourly===')
+    console.log(website)
     return (
         <Link href={`/dashboard/website/${website.websiteId}`} >
-            <Card className="w-[280px] h-[220px] rounded-xl transition hover:shadow-lg">
+            <Card className="w-[280px] h-[250px] rounded-xl transition hover:shadow-lg">
                 {/* Header */}
                 <CardHeader className="flex flex-row items-center gap-3 pb-2">
                     <div className="p-2 bg-primary rounded-md text-white">
@@ -99,16 +91,40 @@ const WebsiteCard = ({ website }: any) => {
                 </CardHeader>
 
 
-                <CardContent className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-2xl font-bold">
-                            {website.totalSessions}
-                        </h3>
+                <CardContent className="flex flex-col gap-3 relative">
+                    <div className="flex justify-between items-center">
+                        <div className='flex items-center gap-4'>
+                            <h3 className="text-2xl font-bold">
+                                {website.totalSessions}
 
-                        <span className="flex items-center gap-1 text-xs text-green-600">
-            <TrendingUp className="w-3 h-3" />
-            24ч
-          </span>
+                            </h3>
+                            <UsersIcon/>
+                        </div>
+
+
+                        <div className="flex gap-1">
+                            <Button size={'sm'} variant={mode === 'daily' ? 'outline' : 'default'}
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        setMode("hourly")
+                                    }}
+
+                            >
+                                час
+                            </Button>
+
+                            <Button size={'sm'}
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        setMode("daily")
+                                    }}
+                                variant={mode === 'hourly' ? 'outline' : 'default'}
+                            >
+                                дни
+                            </Button>
+                        </div>
                     </div>
 
                     <ChartContainer config={chartConfig} className="h-[72px] w-full">

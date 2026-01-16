@@ -4,17 +4,99 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 import Image from "next/image";
+import {countryCodeToEmoji} from "@/lib/utils";
 
-const domainIcons: Record<string, string> = {
-    "google.com": "https://www.google.com/favicon.ico",
-    "youtube.com": "https://www.youtube.com/favicon.ico",
-    "localhost": "/favicon.ico", // локальная иконка
-    "facebook.com": "https://www.facebook.com/favicon.ico",
-    "twitter.com": "https://twitter.com/favicon.ico",
-    "duckduckgo.com": "https://duckduckgo.com/favicon.ico",
-};
 
+
+
+const EmptyChart = ({ text = "Нет данных" }: { text?: string }) => (
+    <div className="h-[220px] flex items-center justify-center text-sm text-muted-foreground">
+        {text}
+    </div>
+)
+const CustomTooltip = ({ active, payload }: any) => {
+    if (!active || !payload?.length) return null
+
+    const item = payload[0].payload
+
+    return (
+        <div className="rounded-md border bg-background px-3 py-2 text-sm shadow">
+            {item.code && <span>{countryCodeToEmoji(item.code)}</span>}
+            <div className="font-medium">{item.name || item.domainName}</div>
+            <div className="text-muted-foreground">
+                Посетители: {item.visitors}
+            </div>
+        </div>
+    )
+}
+const TechBar = ({ title, data }: any) => {
+    if (!data?.length) return null
+
+    return (
+        <div className="space-y-2">
+            <div className="text-sm font-medium text-muted-foreground">
+                {title}
+            </div>
+
+            <ChartContainer
+                config={{ visitors: { label: "Посетители" } }}
+                className="h-[160px]"
+            >
+                <BarChart
+                    layout="vertical"
+                    data={data}
+                    margin={{ left: 90, right: 16 }}
+                >
+                    {/* Названия слева */}
+                    <YAxis
+                        dataKey="name"
+                        type="category"
+                        tickLine={false}
+                        axisLine={false}
+                        width={80}
+                        className="text-xs"
+                    />
+
+                    <XAxis type="number" hide />
+
+                    {/* Tooltip */}
+                    <ChartTooltip
+                        cursor={false}
+                        content={({ active, payload }) => {
+                            if (!active || !payload?.length) return null
+                            const item = payload[0].payload
+
+                            return (
+                                <div className="rounded-md border bg-background px-3 py-2 text-xs shadow">
+                                    <div className="font-medium capitalize">
+                                        {item.name}
+                                    </div>
+                                    <div className="text-muted-foreground">
+                                        Посетители: {item.visitors}
+                                    </div>
+                                </div>
+                            )
+                        }}
+                    />
+
+                    <Bar
+                        dataKey="visitors"
+                        radius={4}
+                    />
+                </BarChart>
+            </ChartContainer>
+        </div>
+    )
+}
+const Insight = ({ text }: { text: string }) => (
+    <div className="rounded-lg border p-3 text-sm">
+        {text}
+    </div>
+)
 const SourceWidget = ({ websiteInfo, loading }: any) => {
+    if (!websiteInfo) {
+        return
+    }
     const chartConfig = {
         visitors: { label: "Visitors" },
         chrome: { label: "Chrome", color: "var(--chart-1)" },
@@ -34,81 +116,89 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
         visitors: r.visitors
     })) || [];
 
-    const BarLabelWithImage = (props: any) => {
-        const { x, y, width, height, value } = props;
 
-        // Выбираем иконку для известного домена, иначе дефолтная
-        const domainKey = Object.keys(domainIcons).find(key => value.includes(key)) || "localhost";
-        const iconSrc = domainIcons[domainKey];
+    const topReferral = websiteInfo?.referrals?.[0];
 
-        return (
-            <g transform={`translate(${x + 4}, ${y + height / 2 - 8})`}>
-                <Image src={iconSrc} alt={value} width={16} height={16} />
-            </g>
-        )
-    }
-    console.log(websiteInfo)
+    const topCountry = websiteInfo?.countries?.[0]
+    const countryPercent =
+        topCountry
+            ? Math.round((topCountry.visitors / websiteInfo.totalSessions) * 100)
+            : 0
+
+    const topDevice = websiteInfo?.devices
+        ?.slice()
+        .sort((a: any, b: any) => b.visitors - a.visitors)[0];
+
+    const directCount =
+        websiteInfo?.referrals?.find(r => r.referrer === "Direct")?.visitors || 0
+
+    const referralCount =
+        websiteInfo?.totalSessions - directCount
 
     return (
         <Card>
-            <CardContent className="p-3"> {/* чуть меньше падинг */}
-                <Tabs defaultValue="refParams">
+            <CardContent style={{display: 'flex', flexDirection: 'column', gap: '42px'}} className="p-3  flex flex-col gap-12"> {/* чуть меньше падинг */}
+                {topReferral && (
+                                <div className="flex items-center gap-3 rounded-lg border p-3">
+                                    <span className="text-sm text-muted-foreground">
+                                        Основной источник:
+                                    </span>
+                                                    <span className="font-medium">
+                                        {topReferral.referrer}
+                                    </span>
+                                                    <span className="text-xs text-muted-foreground">
+                                        ({topReferral.visitors} визитов)
+                                    </span>
+                                </div>
+                )}
+
+                <Tabs  className=' w-full my-8' defaultValue="referrals">
                     <TabsList>
-                        <TabsTrigger value="refParams">Source</TabsTrigger>
-                        <TabsTrigger value="referrals">Referrals</TabsTrigger>
+
+                        <TabsTrigger value="referrals">Направления</TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="refParams">
-                        <ChartContainer config={chartConfig}>
-                            <BarChart
-                                layout="vertical"
-                                data={refParamsData}
-                                margin={{ left: 0, top: 10, bottom: 10 }}
-                                barCategoryGap={10} // меньше расстояние между барами
-                                barGap={4} // компактные бары
-                                height={refParamsData.length * 28} // компактная высота
-                            >
-                                <YAxis dataKey="domainName" type="category" tickLine={false} tickMargin={6} axisLine={false} />
-                                <XAxis dataKey="visitors" type="number" hide />
-                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                <Bar dataKey="visitors" layout="vertical" radius={4} fill="var(--chart-2)" />
-                                <LabelList
-                                    dataKey="domainName"
-                                    position="insideLeft"
-                                    offset={6}
-                                    fontSize={11}
-                                />
-                            </BarChart>
-                        </ChartContainer>
-                    </TabsContent>
+
 
                     <TabsContent value="referrals">
-                        <ChartContainer config={chartConfig}>
-                            <BarChart
-                                layout="vertical"
-                                data={referralData}
-                                margin={{ left: 0, top: 10, bottom: 10 }}
-                                barCategoryGap={10}
-                                barGap={4}
-                                height={referralData.length * 28} // компактная высота
-                            >
-                                <YAxis dataKey="domainName" type="category" tickLine={false} tickMargin={6} axisLine={false} />
-                                <XAxis dataKey="visitors" type="number" hide />
-                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                <Bar dataKey="visitors" layout="vertical" radius={4} fill="var(--chart-1)" />
-                                <LabelList
-                                    dataKey="domainName"
-                                    position="insideLeft"
-                                    offset={6}
-                                    fontSize={11}
-                                    content={BarLabelWithImage} // иконки
-                                />
-                            </BarChart>
-                        </ChartContainer>
+                        {referralData.length === 0 ? (
+                            <EmptyChart />
+                        ) : (
+                            <ChartContainer config={chartConfig} className="h-[220px]">
+                                <BarChart
+                                    layout="vertical"
+                                    data={referralData.slice(0, 6)}
+                                    margin={{ left: 90 }}
+                                >
+                                    <YAxis
+                                        dataKey="domainName"
+                                        type="category"
+                                        tickLine={false}
+                                        axisLine={false}
+                                    />
+                                    <XAxis type="number" hide />
+
+                                    <ChartTooltip content={<CustomTooltip />} />
+
+                                    <Bar dataKey="visitors" radius={4} />
+                                </BarChart>
+                            </ChartContainer>
+                        )}
                     </TabsContent>
                 </Tabs>
 
-                <Tabs defaultValue="Countries">
+                {topCountry && (
+                    <div className="flex items-center gap-4 rounded-lg border p-3">
+                        <span className="text-sm text-muted-foreground">
+                            Топ-страна:
+                        </span>
+                        <span className="font-medium">
+                            {topCountry.name} · {countryPercent}%
+                        </span>
+                    </div>
+                )}
+
+                <Tabs className=''  defaultValue="Countries">
                     <TabsList>
                         <TabsTrigger value="Countries">Страны</TabsTrigger>
                         <TabsTrigger value="Cities">Города</TabsTrigger>
@@ -116,79 +206,113 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
                     </TabsList>
 
                     <TabsContent value="Countries">
-                        <ChartContainer config={chartConfig}>
-                            <BarChart
-                                layout="vertical"
-                                data={websiteInfo?.countries?.map(r => ({ name: r.name, visitors: r.visitors })) || []}
-                                margin={{ left: 0, top: 10, bottom: 10 }}
-                                barCategoryGap={10} // меньше расстояние между барами
-                                barGap={4} // компактные бары
-                                height={(websiteInfo?.countries?.length || 1) * 28}
-                            >
-                                <YAxis dataKey="name" type="category" tickLine={false} tickMargin={6} axisLine={false} />
-                                <XAxis dataKey="visitors" type="number" hide />
-                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                <Bar dataKey="visitors" layout="vertical" radius={4} fill="var(--chart-2)" />
-                                <LabelList
-                                    dataKey="name"
-                                    position="insideLeft"
-                                    offset={6}
-                                    fontSize={11}
-                                />
-                            </BarChart>
-                        </ChartContainer>
-                    </TabsContent>
+                        {!websiteInfo?.countries?.length ? (
+                            <EmptyChart />
+                        ) : (
+                            <ChartContainer config={chartConfig}>
+                                <BarChart
+                                    layout="vertical"
+                                    data={websiteInfo.countries}
+                                    margin={{ left: 60 }}
+                                >
+                                    <YAxis
+                                        dataKey="name"
+                                        type="category"
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tick={({ x, y, payload }) => {
+                                            const item = websiteInfo.countries.find(
+                                                (c: any) => c.name === payload.value
+                                            )
 
+                                            return (
+                                                <g transform={`translate(${x},${y})`}>
+                                                    <text
+                                                        x={-6}
+                                                        y={0}
+                                                        dy={4}
+                                                        textAnchor="end"
+                                                        className="text-xs fill-muted-foreground"
+                                                    >
+                                                        {countryCodeToEmoji(item?.code)} {payload.value}
+                                                    </text>
+                                                </g>
+                                            )
+                                        }}
+                                    />
+                                    <XAxis  type="number" hide />
+
+                                    <ChartTooltip content={<CustomTooltip />} />
+
+                                    <Bar  dataKey="visitors" radius={4} />
+                                </BarChart>
+                            </ChartContainer>
+                        )}
+                    </TabsContent>
                     <TabsContent value="Cities">
-                        <ChartContainer config={chartConfig}>
-                            <BarChart
-                                layout="vertical"
-                                data={websiteInfo?.cities?.map(r => ({ name: r.name, visitors: r.visitors })) || []}
-                                margin={{ left: 0, top: 10, bottom: 10 }}
-                                barCategoryGap={10}
-                                barGap={4}
-                                height={(websiteInfo?.cities?.length || 1) * 28}
-                            >
-                                <YAxis dataKey="name" type="category" tickLine={false} tickMargin={6} axisLine={false} />
-                                <XAxis dataKey="visitors" type="number" hide />
-                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                <Bar dataKey="visitors" layout="vertical" radius={4} fill="var(--chart-1)" />
-                                <LabelList
-                                    dataKey="name"
-                                    position="insideLeft"
-                                    offset={6}
-                                    fontSize={11}
-                                    content={BarLabelWithImage} // иконки
-                                />
-                            </BarChart>
-                        </ChartContainer>
+                        {!websiteInfo?.cities?.length ? (
+                            <EmptyChart />
+                        ) : (
+                            <ChartContainer config={chartConfig}>
+                                <BarChart
+                                    layout="vertical"
+                                    data={websiteInfo.cities}
+                                    margin={{ left: 20 }}
+                                >
+                                    <YAxis
+                                        dataKey="name"
+                                        type="category"
+                                        tickLine={false}
+                                        axisLine={false}
+                                    />
+                                    <XAxis type="number" hide />
+
+                                    <ChartTooltip content={<CustomTooltip />} />
+
+                                    <Bar dataKey="visitors" radius={4} />
+                                </BarChart>
+                            </ChartContainer>
+                        )}
                     </TabsContent>
                     <TabsContent value="Regions">
-                        <ChartContainer config={chartConfig}>
-                            <BarChart
-                                layout="vertical"
-                                data={websiteInfo?.regions?.map(r => ({ name: r.name, visitors: r.visitors })) || []}
-                                margin={{ left: 0, top: 10, bottom: 10 }}
-                                barCategoryGap={10}
-                                barGap={4}
-                                height={(websiteInfo?.regions?.length || 1) * 28}
-                            >
-                                <YAxis dataKey="name" type="category" tickLine={false} tickMargin={6} axisLine={false} />
-                                <XAxis dataKey="visitors" type="number" hide />
-                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                <Bar dataKey="visitors" layout="vertical" radius={4} fill="var(--chart-1)" />
-                                <LabelList
-                                    dataKey="name"
-                                    position="insideLeft"
-                                    offset={6}
-                                    fontSize={11}
-                                    content={BarLabelWithImage}
-                                />
-                            </BarChart>
-                        </ChartContainer>
+                        {!websiteInfo?.regions?.length ? (
+                            <EmptyChart />
+                        ) : (
+                            <ChartContainer config={chartConfig}>
+                                <BarChart
+                                    layout="vertical"
+                                    data={websiteInfo.regions}
+                                    margin={{ left: 20 }}
+                                >
+                                    <YAxis
+                                        dataKey="name"
+                                        type="category"
+                                        tickLine={false}
+                                        axisLine={false}
+                                    />
+                                    <XAxis type="number" hide />
+
+                                    <ChartTooltip content={<CustomTooltip />} />
+
+                                    <Bar dataKey="visitors" radius={4} />
+                                </BarChart>
+                            </ChartContainer>
+                        )}
                     </TabsContent>
+
                 </Tabs>
-                <Tabs defaultValue="Devices">
+                {topDevice && (
+                    <div className="flex items-center gap-3 rounded-lg border p-3">
+                        <span className="text-sm text-muted-foreground">
+                            Основное устройство:
+                        </span>
+                        <span className="font-medium capitalize">
+                            {topDevice.name}
+                        </span>
+                    </div>
+                )}
+
+                <Tabs className=''  defaultValue="Devices">
                     <TabsList>
                         <TabsTrigger value="Devices">Устройства</TabsTrigger>
                         <TabsTrigger value="OS">OS</TabsTrigger>
@@ -196,78 +320,122 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
                     </TabsList>
 
                     <TabsContent value="Devices">
-                        <ChartContainer config={chartConfig}>
-                            <BarChart
-                                layout="vertical"
-                                data={websiteInfo?.devices?.map(r => ({ name: r.name, visitors: r.visitors })) || []}
-                                margin={{ left: 0, top: 10, bottom: 10 }}
-                                barCategoryGap={10} // меньше расстояние между барами
-                                barGap={4} // компактные бары
-                                height={(websiteInfo?.devices?.length || 1) * 28}
-                            >
-                                <YAxis dataKey="name" type="category" tickLine={false} tickMargin={6} axisLine={false} />
-                                <XAxis dataKey="visitors" type="number" hide />
-                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                <Bar dataKey="visitors" layout="vertical" radius={4} fill="var(--chart-2)" />
-                                <LabelList
-                                    dataKey="name"
-                                    position="insideLeft"
-                                    offset={6}
-                                    fontSize={11}
-                                />
-                            </BarChart>
-                        </ChartContainer>
+                        {!websiteInfo?.devices?.length ? (
+                            <EmptyChart />
+                        ) : (
+                            <ChartContainer config={chartConfig}>
+                                <BarChart
+                                    layout="vertical"
+                                    data={websiteInfo.devices}
+                                    margin={{ left: 20 }}
+                                >
+                                    <YAxis
+                                        dataKey="name"
+                                        type="category"
+                                        tickLine={false}
+                                        axisLine={false}
+                                    />
+                                    <XAxis type="number" hide />
+
+                                    <ChartTooltip content={<CustomTooltip />} />
+
+                                    <Bar dataKey="visitors" radius={4} />
+                                </BarChart>
+                            </ChartContainer>
+                        )}
                     </TabsContent>
-
                     <TabsContent value="OS">
-                        <ChartContainer config={chartConfig}>
-                            <BarChart
-                                layout="vertical"
-                                data={websiteInfo?.os?.map(r => ({ name: r.name, visitors: r.visitors })) || []}
+                        {!websiteInfo?.os?.length ? (
+                            <EmptyChart />
+                        ) : (
+                            <ChartContainer config={chartConfig}>
+                                <BarChart
+                                    layout="vertical"
+                                    data={websiteInfo.os}
+                                    margin={{ left: 20 }}
+                                >
+                                    <YAxis
+                                        dataKey="name"
+                                        type="category"
+                                        tickLine={false}
+                                        axisLine={false}
+                                    />
+                                    <XAxis type="number" hide />
 
-                                margin={{ left: 0, top: 10, bottom: 10 }}
-                                barCategoryGap={10}
-                                barGap={4}
-                                height={(websiteInfo?.os?.length || 1) * 28}
-                            >
-                                <YAxis dataKey="domainName" type="category" tickLine={false} tickMargin={6} axisLine={false} />
-                                <XAxis dataKey="visitors" type="number" hide />
-                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                <Bar dataKey="visitors" layout="vertical" radius={4} fill="var(--chart-1)" />
-                                <LabelList
-                                    dataKey="domainName"
-                                    position="insideLeft"
-                                    offset={6}
-                                    fontSize={11}
-                                    content={BarLabelWithImage} // иконки
-                                />
-                            </BarChart>
-                        </ChartContainer>
+                                    <ChartTooltip content={<CustomTooltip />} />
+
+                                    <Bar dataKey="visitors" radius={4} />
+                                </BarChart>
+                            </ChartContainer>
+                        )}
                     </TabsContent>
                     <TabsContent value="Browsers">
-                        <ChartContainer config={chartConfig}>
-                            <BarChart
-                                layout="vertical"
-                                data={websiteInfo?.browsers?.map(r => ({ name: r.name, visitors: r.visitors })) || []}
+                        {!websiteInfo?.browsers?.length ? (
+                            <EmptyChart />
+                        ) : (
+                            <ChartContainer config={chartConfig}>
+                                <BarChart
+                                    layout="vertical"
+                                    data={websiteInfo.browsers}
+                                    margin={{ left: 20 }}
+                                >
+                                    <YAxis
+                                        dataKey="name"
+                                        type="category"
+                                        tickLine={false}
+                                        axisLine={false}
+                                    />
+                                    <XAxis type="number" hide />
 
-                                margin={{ left: 0, top: 10, bottom: 10 }}
-                                barCategoryGap={10}
-                                barGap={4}
-                                height={(websiteInfo?.browsers?.length || 1) * 28}
-                            >
-                                <YAxis dataKey="name" type="category" tickLine={false} tickMargin={6} axisLine={false} />
-                                <XAxis dataKey="visitors" type="number" hide />
-                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                <Bar dataKey="visitors" layout="vertical" radius={4} fill="var(--chart-1)" />
-                                <LabelList
-                                    dataKey="name"
-                                    position="insideLeft"
-                                    offset={6}
-                                    fontSize={11}
-                                    content={BarLabelWithImage}
-                                />
-                            </BarChart>
-                        </ChartContainer>
+                                    <ChartTooltip content={<CustomTooltip />} />
+
+                                    <Bar dataKey="visitors" radius={4} />
+                                </BarChart>
+                            </ChartContainer>
+                        )}
+                    </TabsContent>
+
+                </Tabs>
+
+                <Tabs className=''  defaultValue="Insights">
+                    <TabsList>
+                        <TabsTrigger value="Insights">Инсайты</TabsTrigger>
+                        <TabsTrigger value="Traffic">Трафик</TabsTrigger>
+                        <TabsTrigger value="Tech">Технологии</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="Insights">
+                        <div className="space-y-3">
+                            <Insight text={`Основной источник: ${topReferral?.referrer}`} />
+                            <Insight text={`Топ-страна: ${topCountry?.name}`} />
+                            <Insight text={`Основное устройство: ${topDevice?.name}`} />
+                            <Insight
+                                text={
+                                    websiteInfo.totalSessions > 100
+                                        ? "Достаточно данных для анализа поведения"
+                                        : "Недостаточно данных для поведенческих выводов"
+                                }
+                            />
+                        </div>
+                    </TabsContent>
+                    <TabsContent value="Traffic">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="rounded-lg border p-4">
+                                <div className="text-xs text-muted-foreground">Прямо</div>
+                                <div className="text-xl font-semibold">{directCount}</div>
+                            </div>
+                            <div className="rounded-lg border p-4">
+                                <div className="text-xs text-muted-foreground">По ссылке</div>
+                                <div className="text-xl font-semibold">{referralCount}</div>
+                            </div>
+                        </div>
+                    </TabsContent>
+                    <TabsContent value="Tech">
+                        <div className="space-y-6">
+                            <TechBar title="Устройства" data={websiteInfo.devices} />
+                            <TechBar title="ОС" data={websiteInfo.os} />
+                            <TechBar title="Браузеры" data={websiteInfo.browsers} />
+                        </div>
                     </TabsContent>
                 </Tabs>
             </CardContent>

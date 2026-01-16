@@ -6,7 +6,9 @@ import getServerUser from "@/lib/auth-server";
 
 export async function DELETE(req:NextRequest) {
     try {
-        const {websiteId} = await req.json()
+        const { searchParams } = new URL(req.url)
+
+        const websiteId = searchParams.get("websiteId")
         const user = await getServerUser()
 
         if (!user) {

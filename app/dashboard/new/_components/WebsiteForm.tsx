@@ -79,64 +79,72 @@ const WebsiteForm = () => {
                                 <GlobeIcon />
                             </InputGroupAddon>
                         </InputGroup>
-                        <div className='mt-5'>
-                            <Label  className='text-sm mb-2'>Часовый полюс</Label>
-                            <Select value={timeZone} onValueChange={(value) => setTimeZone(value)} required={true}>
+                        <div className="mt-5">
+                            <Label className="text-sm mb-2">Часовой пояс</Label>
+
+                            <Select value={timeZone} onValueChange={setTimeZone} required>
                                 <SelectTrigger className="w-[280px]">
-                                    <SelectValue placeholder="Select a timezone" />
+                                    <SelectValue placeholder="Выберите часовой пояс" />
                                 </SelectTrigger>
+
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectLabel>North America</SelectLabel>
-                                        <SelectItem value="est">Eastern Standard Time (EST)</SelectItem>
-                                        <SelectItem value="cst">Central Standard Time (CST)</SelectItem>
-                                        <SelectItem value="mst">Mountain Standard Time (MST)</SelectItem>
-                                        <SelectItem value="pst">Pacific Standard Time (PST)</SelectItem>
-                                        <SelectItem value="akst">Alaska Standard Time (AKST)</SelectItem>
-                                        <SelectItem value="hst">Hawaii Standard Time (HST)</SelectItem>
+                                        <SelectLabel>Северная Америка</SelectLabel>
+                                        <SelectItem value="est">Восточное время (EST)</SelectItem>
+                                        <SelectItem value="cst">Центральное время (CST)</SelectItem>
+                                        <SelectItem value="mst">Горное время (MST)</SelectItem>
+                                        <SelectItem value="pst">Тихоокеанское время (PST)</SelectItem>
+                                        <SelectItem value="akst">Аляскинское время (AKST)</SelectItem>
+                                        <SelectItem value="hst">Гавайское время (HST)</SelectItem>
                                     </SelectGroup>
+
                                     <SelectGroup>
-                                        <SelectLabel>Europe & Africa</SelectLabel>
-                                        <SelectItem value="gmt">Greenwich Mean Time (GMT)</SelectItem>
-                                        <SelectItem value="cet">Central European Time (CET)</SelectItem>
-                                        <SelectItem value="eet">Eastern European Time (EET)</SelectItem>
+                                        <SelectLabel>Европа и Африка</SelectLabel>
+                                        <SelectItem value="gmt">Время по Гринвичу (GMT)</SelectItem>
+                                        <SelectItem value="cet">Центрально-европейское время (CET)</SelectItem>
+                                        <SelectItem value="eet">Восточно-европейское время (EET)</SelectItem>
                                         <SelectItem value="west">
-                                            Western European Summer Time (WEST)
+                                            Западно-европейское летнее время (WEST)
                                         </SelectItem>
-                                        <SelectItem value="cat">Central Africa Time (CAT)</SelectItem>
-                                        <SelectItem value="eat">East Africa Time (EAT)</SelectItem>
+                                        <SelectItem value="cat">Центральноафриканское время (CAT)</SelectItem>
+                                        <SelectItem value="eat">Восточноафриканское время (EAT)</SelectItem>
                                     </SelectGroup>
+
                                     <SelectGroup>
-                                        <SelectLabel>Asia</SelectLabel>
-                                        <SelectItem value="msk">Moscow Time (MSK)</SelectItem>
-                                        <SelectItem value="ist">India Standard Time (IST)</SelectItem>
-                                        <SelectItem value="cst_china">China Standard Time (CST)</SelectItem>
-                                        <SelectItem value="jst">Japan Standard Time (JST)</SelectItem>
-                                        <SelectItem value="kst">Korea Standard Time (KST)</SelectItem>
+                                        <SelectLabel>Азия</SelectLabel>
+                                        <SelectItem value="msk">Московское время (MSK)</SelectItem>
+                                        <SelectItem value="ist">Индийское стандартное время (IST)</SelectItem>
+                                        <SelectItem value="cst_china">Китайское стандартное время (CST)</SelectItem>
+                                        <SelectItem value="jst">Японское стандартное время (JST)</SelectItem>
+                                        <SelectItem value="kst">Корейское стандартное время (KST)</SelectItem>
                                         <SelectItem value="ist_indonesia">
-                                            Indonesia Central Standard Time (WITA)
+                                            Центральное время Индонезии (WITA)
                                         </SelectItem>
                                     </SelectGroup>
+
                                     <SelectGroup>
-                                        <SelectLabel>Australia & Pacific</SelectLabel>
+                                        <SelectLabel>Австралия и Океания</SelectLabel>
                                         <SelectItem value="awst">
-                                            Australian Western Standard Time (AWST)
+                                            Западно-австралийское время (AWST)
                                         </SelectItem>
                                         <SelectItem value="acst">
-                                            Australian Central Standard Time (ACST)
+                                            Центрально-австралийское время (ACST)
                                         </SelectItem>
                                         <SelectItem value="aest">
-                                            Australian Eastern Standard Time (AEST)
+                                            Восточно-австралийское время (AEST)
                                         </SelectItem>
-                                        <SelectItem value="nzst">New Zealand Standard Time (NZST)</SelectItem>
-                                        <SelectItem value="fjt">Fiji Time (FJT)</SelectItem>
+                                        <SelectItem value="nzst">
+                                            Новозеландское стандартное время (NZST)
+                                        </SelectItem>
+                                        <SelectItem value="fjt">Время Фиджи (FJT)</SelectItem>
                                     </SelectGroup>
+
                                     <SelectGroup>
-                                        <SelectLabel>South America</SelectLabel>
-                                        <SelectItem value="art">Argentina Time (ART)</SelectItem>
-                                        <SelectItem value="bot">Bolivia Time (BOT)</SelectItem>
-                                        <SelectItem value="brt">Brasilia Time (BRT)</SelectItem>
-                                        <SelectItem value="clt">Chile Standard Time (CLT)</SelectItem>
+                                        <SelectLabel>Южная Америка</SelectLabel>
+                                        <SelectItem value="art">Аргентинское время (ART)</SelectItem>
+                                        <SelectItem value="bot">Время Боливии (BOT)</SelectItem>
+                                        <SelectItem value="brt">Бразильское время (BRT)</SelectItem>
+                                        <SelectItem value="clt">Чилийское стандартное время (CLT)</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
@@ -146,12 +154,14 @@ const WebsiteForm = () => {
                             <Button className='w-full mt-5'>
                                 {loading ? <Loader2Icon className='animate-spin' /> :
                                     <PlusIcon/>
-                                 }
+                                }
                                 {loading ? 'Подождите...' : 'Вебсайт'}
 
 
                             </Button>
                         </div>
+
+
                     </form>
                 </CardContent>
             </Card>

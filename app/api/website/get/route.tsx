@@ -2,7 +2,7 @@ import {toast} from "sonner";
 import {NextResponse} from "next/server";
 import {db} from "@/configs/db";
 import {websitesTable} from "@/configs/schema";
-import {eq} from "drizzle-orm";
+import {eq,desc} from "drizzle-orm";
 import getServerUser from "@/lib/auth-server";
 
 export async function GET(req: Request) {
@@ -14,7 +14,7 @@ export async function GET(req: Request) {
         }
 
         const websites  =await db.select().from(websitesTable)
-            .where(eq(websitesTable?.userEmail, user?.email))
+            .where(eq(websitesTable?.userEmail, user?.email)).orderBy(desc(websitesTable.id))
 
         return  NextResponse.json({websites:websites})
 

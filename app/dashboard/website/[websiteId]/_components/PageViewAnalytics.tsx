@@ -70,7 +70,35 @@ function buildDailyChart(daily: any[] = []) {
     }))
 }
 
-/* ---------------- COMPONENT ---------------- */
+function getPeakHour(hourly: any[] = []) {
+    if (!hourly.length) return "—"
+
+    let peak = hourly[0]
+
+    for (const h of hourly) {
+        if (h.count > peak.count) {
+            peak = h
+        }
+    }
+
+    return peak
+}
+function getWeakestHour(hourly: any[] = []) {
+
+    const activeHours = hourly.filter(h => h.count > 0)
+
+    if (!activeHours.length) return null
+
+    let weakest = activeHours[0]
+
+    for (const h of activeHours) {
+        if (h.count < weakest.count) {
+            weakest = h
+        }
+    }
+
+    return weakest
+}
 
 const PageViewAnalytics = ({
                                loading,
@@ -104,37 +132,53 @@ const PageViewAnalytics = ({
             color: "hsl(var(--primary))",
         },
     } satisfies ChartConfig
+    const seconds = Math.floor(websiteInfo?.totalActiveTime / 1000)
+    const peakHour = getPeakHour(websiteInfo.hourly)
 
+    const weakestHour =  getWeakestHour(websiteInfo.hourly)
     return (
         <Card >
             <CardContent className="p-6 mt-4 space-y-6">
-
+                <h1 className='font-semibold text-2xl'>Статистика</h1>
                 <div className="flex items-center justify-between gap-6">
                     <Stat title="Посетители" value={websiteInfo.totalVisitors} />
                     <Stat title="Сессии" value={websiteInfo.totalSessions} />
                     <Stat
                         title="Время"
-                        value={`${(websiteInfo.totalActiveTime / 60).toFixed(1)} мин`}
+                        value={`${(seconds / 60).toFixed(1)} минут`}
                     />
                     <Stat
                         title="Среднее"
                         value={
-                            websiteInfo.totalSessions > 0
+                            websiteInfo?.totalSessions > 0
                                 ? `${(
                                     websiteInfo.totalActiveTime /
                                     websiteInfo.totalSessions /
+                                    1000 /
                                     60
                                 ).toFixed(1)} мин`
                                 : "0 мин"
                         }
                     />
-                    <Stat title="Онлайн" value={liveUserCount} />
+                    <Stat title="Пик" value={
+                        peakHour
+                            ? `${peakHour.hourLabel} (${peakHour.count})`
+                            : "—"
+                    } />
+                    <Stat
+                        title="Слабый"
+                        value={
+                            weakestHour
+                                ? `${weakestHour.hourLabel} (${weakestHour.count})`
+                                : "—"
+                        }
+                    />
                 </div>
 
                 <Separator className='my-12' />
 
 
-                <ChartContainer config={chartConfig} className="h-[70px] w-full">
+                <ChartContainer config={chartConfig} className="h-[270px] w-full">
                     <AreaChart data={chartData} margin={{ left: 12, right: 12 }}>
                         <CartesianGrid vertical={false} />
 

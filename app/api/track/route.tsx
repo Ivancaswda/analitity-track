@@ -28,18 +28,38 @@ export async function OPTIONS(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
+        console.log("TRACK BODY:", req.body)
         const user = await getServerUser()
         const body = await req.json()
         const parser = new UAParser(req.headers.get('user-agent') || "");
         const deviceInfo = parser.getDevice();
         const osInfo = parser.getOS()
         const browserInfo = parser.getBrowser();
-        const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || req.headers.get('x-real-ip')
-            || "71.71.22.54"
+        const forwardedFor = req.headers.get("x-forwarded-for")
+        let realIp =
+            req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+            req.headers.get("x-real-ip") ||
+            ""
 
-        const geoRes = await fetch(`http://ip-api.com/json/71.71.22.54`)
-        const geoInfo  =await geoRes.json();
+        if (realIp === "::1") realIp = "127.0.0.1"
 
+        let geoInfo: any = {}
+
+        if (realIp && realIp !== "127.0.0.1") {
+            try {
+                const geoRes = await fetch(`http://ip-api.com/json/${realIp}`)
+                geoInfo = await geoRes.json()
+            } catch {}
+        }
+        const deviceType = deviceInfo.type || "desktop"
+        const osName = osInfo.name || "Unknown"
+        const browserName = browserInfo.name || "Unknown"
+
+
+
+        if (body.type === "ping") {
+            return NextResponse.json({ success: true })
+        }
 
         let result
         if (body?.type === 'entry') {
@@ -57,15 +77,15 @@ export async function POST(req: NextRequest) {
                 utm_source: body.utm_source,
                 utm_medium: body.utm_medium,
                 utm_campaign: body.utm_campaign,
-                os: osInfo,
-                region: geoInfo.regionName,
-                country: geoInfo.country,
-                ipAddress: ip || '',
-                refParams: body.RefParams,
-               device: JSON.stringify(deviceInfo),
-               browser: JSON.stringify(browserInfo),
-               city: geoInfo.city ?? null,
-               countryCode: geoInfo.countryCode
+                os: osName,
+                refParams: body.refParams,
+               device: deviceType,
+               browser: browserName,
+               country: geoInfo?.country ?? null,
+               region: geoInfo?.regionName ?? null,
+               city: geoInfo?.city ?? null,
+               countryCode: geoInfo?.countryCode ?? null,
+               ipAddress: realIp,
             }).returning()
 
             console.log('inserted Result', result)
@@ -82,18 +102,7 @@ export async function POST(req: NextRequest) {
            )
             console.log('updated Result', result)
         }
-
-
-
-
-
-
-
-
-
-
-
-        return NextResponse.json({success:true, message: 'Data received successfully', data:result},
+  return NextResponse.json({success:true, message: 'Data received successfully', data:result},
             {headers: CORS_HEADERS})
     } catch (error) {
         console.log(error)

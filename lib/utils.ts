@@ -4,3 +4,11 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+export const countryCodeToEmoji = (code?: string) => {
+  if (!code) return "🌍"
+  return code
+      .toUpperCase()
+      .replace(/./g, char =>
+          String.fromCodePoint(127397 + char.charCodeAt(0))
+      )
+}

@@ -1,10 +1,11 @@
 // public/analytics.js
 (function (){
     console.log('Скрипт для аналитики загружен!')
+    const NODE_ENV ='development'
     function generateUUID() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 9)
     }
-    const session_duration = 12*60*50*1000; //12 hours
+    const session_duration = 12*60*60*1000; //12 hours
     const now = Date.now()
 
     let visitorId = localStorage.getItem('webtrack_visitor_id');
@@ -34,27 +35,25 @@
     const urlParams = new URLSearchParams(window.location.search);
     const utm_source = urlParams.get('utm_source') || '';
     const utm_medium = urlParams.get('utm_medium') || '';
-    const utm_campaign = urlParams.get('utm_utm_campaign') || '';
-    const RefParams = window.location.href.split('?')[1] || ''
+    const utm_campaign = urlParams.get('utm_campaign') || '';
+    const refParams = window.location.href.split('?')[1] || ''
 
 
     const entryTime = Date.now();
     const data = {
-        type: 'entry',
+        type: "entry",
         websiteId,
         domain,
-        entryTime,
+        entryTime: Date.now(),
         referrer,
         url: window.location.href,
         visitorId,
-        urlParams,
         utm_source,
-        utm_campaign,
         utm_medium,
-        RefParams
-
+        utm_campaign,
+        refParams
     }
-    fetch('https://analitity-track.vercel.app' + "/api/track", {
+    fetch(NODE_ENV === 'production' ? 'https://analitity-track.vercel.app' : 'http://localhost:3000' + "/api/track", {
         method: 'POST',
         headers: {
             "Content-Type": 'application/json'
@@ -71,7 +70,7 @@
         const exitTime = Date.now();
         totalActiveTime += Date.now()-activeStartTime;
 
-        fetch('https://analitity-track.vercel.app/api/track', {
+        fetch(NODE_ENV === 'production' ? 'https://analitity-track.vercel.app' : 'http://localhost:3000' +'/api/track', {
             method: 'POST',
             keepalive: true,
             headers: {
@@ -92,14 +91,15 @@
     window.addEventListener('beforeunload', handleExit)
 
     const sendLivePing = () => {
-        fetch('https://analitity-track.vercel.app/api/live/create', {
+        fetch(NODE_ENV === 'production' ? 'https://analitity-track.vercel.app' : 'http://localhost:3000' +'/api/track', {
             method: 'POST',
             headers: {'Content-Type': "application/json"},
             body: JSON.stringify({
                 visitorId,
                 websiteId,
-                last_seen: Date.now().toString(),
-                url: window.location.href
+                last_seen: Date.now(),
+                url: window.location.href,
+                type: "ping"
             })
         })
     }

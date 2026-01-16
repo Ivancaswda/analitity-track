@@ -13,7 +13,7 @@ export default function InstallScriptPage() {
     const websiteId = searchParams.get("websiteId")
     const domain = searchParams.get("domain")
 
-    const script = `<script defer\n  data-website-id=\"${websiteId}\"\n  data-domain=\"https://${domain}\"\n  src=\"https://analitity-track.vercel.app/analytics.js\">\n</script>`
+    const script = `<script defer\n  data-website-id=\"${websiteId}\"\n  data-domain=\"https://${domain}\"\n  src=\"http://localhost:3000/analytics.js\">\n</script>`
 
     const copyScript = async () => {
         await navigator.clipboard.writeText(script)
@@ -39,7 +39,7 @@ export default function InstallScriptPage() {
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                    <div className=" bg-primary/40 text-zinc-100 rounded-lg p-4 text-sm font-mono">
+                    <div className=" bg-primary/10 text-black rounded-lg p-4 text-sm font-mono">
                         <pre className="whitespace-pre-wrap">{script}</pre>
 
                         <Button
