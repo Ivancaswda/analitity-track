@@ -153,7 +153,7 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
                 )}
 
                 <Tabs  className=' w-full my-8' defaultValue="referrals">
-                    <TabsList>
+                    <TabsList className="flex overflow-x-auto no-scrollbar">
 
                         <TabsTrigger value="referrals">Направления</TabsTrigger>
                     </TabsList>
@@ -167,11 +167,11 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
                             <ChartContainer config={chartConfig} className="h-[220px]">
                                 <BarChart
                                     layout="vertical"
-                                    data={referralData.slice(0, 6)}
-                                    margin={{ left: 90 }}
+                                    data={referralData}
+                                    margin={{ left: 40, right: 12 }}
                                 >
                                     <YAxis
-                                        dataKey="domainName"
+                                        dataKey="referrer"
                                         type="category"
                                         tickLine={false}
                                         axisLine={false}

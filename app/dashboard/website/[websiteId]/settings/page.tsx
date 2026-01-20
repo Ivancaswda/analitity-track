@@ -68,15 +68,18 @@ const SettingsPage = () => {
         return
     }
     return (
-        <div className='px-10 py-6 space-y-5 gap-6'>
+        <div className="px-4 sm:px-6 md:px-10 py-4 sm:py-6 space-y-5">
             <Button onClick={() => router.replace(`/dashboard/website/${websiteId}`)} className=''>
                 <ArrowLeft/> Назад
             </Button>
             <h2 className='text-3xl font-semibold '>Настройки для </h2>
-            <Tabs defaultValue="general" className="w-[800px]">
-                <TabsList>
-                    <TabsTrigger value="general">Главные</TabsTrigger>
-                    <TabsTrigger value="other">Другие</TabsTrigger>
+            <Tabs
+                defaultValue="general"
+                className="w-full max-w-full md:max-w-[800px]"
+            >
+                <TabsList className="flex w-full overflow-x-auto">
+                    <TabsTrigger className="flex-1" value="general">Главные</TabsTrigger>
+                    <TabsTrigger className="flex-1" value="other">Другие</TabsTrigger>
                 </TabsList>
                 <TabsContent value="general">
                     <Card>
@@ -86,13 +89,14 @@ const SettingsPage = () => {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className=" bg-primary/10 text-black rounded-lg p-4 text-sm font-mono">
-                                <pre className="whitespace-pre-wrap">{script}</pre>
+                            <div className="bg-primary/10 rounded-lg p-3 sm:p-4 text-xs sm:text-sm font-mono overflow-x-auto">
+  <pre className="whitespace-pre-wrap break-all">
+    {script}
+  </pre>
 
                                 <Button
-
                                     variant="secondary"
-                                    className="mt-2"
+                                    className="mt-2 w-full sm:w-auto flex gap-2"
                                     onClick={copyScript}
                                 >
                                     Скопировать
@@ -110,8 +114,10 @@ const SettingsPage = () => {
                         </CardHeader>
                         <CardContent>
                             <Input value={websiteDomain} onChange={(e) => setWebsiteDomain(e.target.value)} placeholder='website.com'/>
-                            <div className='flex justify-between mt-2'>
-                                <h2>Ваш публичный вебтрак айдишник: {websiteId}</h2>
+                            <div className="flex flex-col sm:flex-row sm:justify-between gap-2 mt-2 text-sm">
+                                <h2 className="break-all">
+                                    Публичный ID: {websiteId}
+                                </h2>
                             </div>
                         </CardContent>
                     </Card>
@@ -131,10 +137,10 @@ const SettingsPage = () => {
                         <CardContent>
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                    <Button variant="outline"><Button variant='destructive'>
-                                        <TrashIcon/>
+                                    <Button variant="destructive" className="w-full sm:w-auto flex gap-2">
+                                        <TrashIcon className="w-4 h-4" />
                                         Удалить
-                                    </Button></Button>
+                                    </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>

@@ -1,10 +1,10 @@
 "use client"
-import React from 'react'
+import React, {useState} from 'react'
 import Image from "next/image";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {useAuth} from "@/context/useAuth";
 import {Button} from "@/components/ui/button";
-import {Loader2Icon, UserIcon} from "lucide-react";
+import {Loader2Icon, MenuIcon, UserIcon, XIcon} from "lucide-react";
 import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog";
 import {toast} from "sonner";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
@@ -15,6 +15,7 @@ import Link from "next/link";
 const Header = () => {
     const {user, logout, loading} = useAuth()
     const router =useRouter()
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     if (loading) {
         return  <div className='flex items-center justify-center w-full h-screen'>
@@ -30,7 +31,7 @@ const Header = () => {
 
             </div>
 
-            <ul className='flex gap-4 text-lg items-center '>
+            <ul className='hidden md:flex gap-4 text-lg items-center '>
                 <Link href={"/"}>
                     <li className='hover:text-primary transtion-all cursor-pointer'>Главная страница</li>
 
@@ -44,6 +45,15 @@ const Header = () => {
                 </Link>
 
             </ul>
+            <div className="md:hidden">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setMobileOpen(true)}
+                >
+                    <MenuIcon className="w-6 h-6" />
+                </Button>
+            </div>
             {user ? <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Avatar className="cursor-pointer hover:shadow-xl shadow">
@@ -79,7 +89,7 @@ const Header = () => {
                     w-full text-left px-3 py-2 rounded-xl text-sm
                     hover:bg-muted transition
                 "
-                            onClick={() => router.push('/myProjects')}
+                            onClick={() => router.push('/dashboard')}
                         >
                             Мои проекты
                         </button>
@@ -143,6 +153,70 @@ const Header = () => {
                 <UserIcon/>
                 Войти
             </Button>}
+            <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
+                <DialogContent className="sm:hidden p-6 rounded-2xl">
+                    <div className="flex items-center justify-between mb-6">
+                        <Image src="/logo.png" alt="logo" width={120} height={120} />
+                        <Button variant="ghost" size="icon" onClick={() => setMobileOpen(false)}>
+                            <XIcon />
+                        </Button>
+                    </div>
+
+                    <nav className="flex flex-col gap-4 text-lg">
+                        <Link href="/" onClick={() => setMobileOpen(false)}>
+                            Главная
+                        </Link>
+                        <Link href="/dashboard" onClick={() => setMobileOpen(false)}>
+                            Панель управления
+                        </Link>
+                        <Link href="/pricing" onClick={() => setMobileOpen(false)}>
+                            Услуги
+                        </Link>
+                    </nav>
+
+                    <div className="mt-6 pt-6 border-t">
+                        {user ? (
+                            <div className="flex items-center gap-3">
+                                <Avatar>
+                                    <AvatarImage src={user.avatarUrl} />
+                                    <AvatarFallback>
+                                        {user.userName[0].toUpperCase()}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <p className="font-medium">{user.userName}</p>
+                                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <Button
+                                className="w-full"
+                                onClick={() => {
+                                    setMobileOpen(false);
+                                    router.replace("/sign-up");
+                                }}
+                            >
+                                <UserIcon className="mr-2" /> Войти
+                            </Button>
+                        )}
+                    </div>
+
+                    {user && (
+                        <Button
+                            variant="destructive"
+                            className="w-full mt-4"
+                            onClick={() => {
+                                logout();
+                                toast.success("Вы вышли");
+                                setMobileOpen(false);
+                            }}
+                        >
+                            Выйти
+                        </Button>
+                    )}
+                </DialogContent>
+            </Dialog>
+
         </div>
     )
 }

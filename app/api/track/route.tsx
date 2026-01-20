@@ -13,16 +13,12 @@ const CORS_HEADERS = {
 
 }
 export async function OPTIONS(req: NextRequest) {
-    const origin = req.headers.get('origin') || "*";
-    return new NextResponse(null, {
-        status: 200,
-        headers: {
-            "Access-Control-Allow-Origin": origin,
-            "Access-Control-Allow-Methods": "POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type"
 
-        }
-    })
+        return new NextResponse(null, {
+            status: 200,
+            headers: CORS_HEADERS
+        })
+
 }
 
 
@@ -41,24 +37,26 @@ export async function POST(req: NextRequest) {
             req.headers.get("x-real-ip") ||
             ""
 
-        if (realIp === "::1") realIp = "127.0.0.1"
 
-        let geoInfo: any = {}
 
-        if (realIp && realIp !== "127.0.0.1") {
-            try {
-                const geoRes = await fetch(`http://ip-api.com/json/${realIp}`)
-                geoInfo = await geoRes.json()
-            } catch {}
-        }
+        const geo = req?.geo
+
+        const country = geo?.country ?? null
+        const region = geo?.region ?? null
+        const city = geo?.city ?? null
+
         const deviceType = deviceInfo.type || "desktop"
         const osName = osInfo.name || "Unknown"
         const browserName = browserInfo.name || "Unknown"
 
 
+        const entryTime =
+            typeof body.entryTime === "number"
+                ? body.entryTime
+                : Date.now()
 
         if (body.type === "ping") {
-            return NextResponse.json({ success: true })
+            return NextResponse.json({ success: true } , { headers: CORS_HEADERS })
         }
 
         let result
@@ -70,7 +68,7 @@ export async function POST(req: NextRequest) {
                 url: body.url,
                 type: body.type,
                 referrer: body.referrer,
-                entryTime: body.entryTime,
+                entryTime: entryTime,
                 exitTime: body.exitTime,
                 totalActiveTime: body.totalActiveTime,
                 urlParams: body.urlParams,
@@ -81,10 +79,10 @@ export async function POST(req: NextRequest) {
                 refParams: body.refParams,
                device: deviceType,
                browser: browserName,
-               country: geoInfo?.country ?? null,
-               region: geoInfo?.regionName ?? null,
-               city: geoInfo?.city ?? null,
-               countryCode: geoInfo?.countryCode ?? null,
+               country: country ?? null,
+               region: region ?? null,
+               city: city ?? null,
+               countryCode: geo?.country ??  null,
                ipAddress: realIp,
             }).returning()
 
@@ -106,6 +104,6 @@ export async function POST(req: NextRequest) {
             {headers: CORS_HEADERS})
     } catch (error) {
         console.log(error)
-        return NextResponse.json({error: error}, {status: 500})
+        return NextResponse.json({error: error}, {status: 500, headers: CORS_HEADERS})
     }
 }

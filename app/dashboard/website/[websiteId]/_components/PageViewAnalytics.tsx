@@ -71,7 +71,7 @@ function buildDailyChart(daily: any[] = []) {
 }
 
 function getPeakHour(hourly: any[] = []) {
-    if (!hourly.length) return "—"
+    if (!hourly.length) return null
 
     let peak = hourly[0]
 
@@ -140,7 +140,13 @@ const PageViewAnalytics = ({
         <Card >
             <CardContent className="p-6 mt-4 space-y-6">
                 <h1 className='font-semibold text-2xl'>Статистика</h1>
-                <div className="flex items-center justify-between gap-6">
+                <div className="
+  grid
+  grid-cols-2
+  sm:grid-cols-3
+  lg:grid-cols-6
+  gap-4
+">
                     <Stat title="Посетители" value={websiteInfo.totalVisitors} />
                     <Stat title="Сессии" value={websiteInfo.totalSessions} />
                     <Stat
@@ -178,7 +184,12 @@ const PageViewAnalytics = ({
                 <Separator className='my-12' />
 
 
-                <ChartContainer config={chartConfig} className="h-[270px] w-full">
+                <ChartContainer config={chartConfig} className="
+    h-[220px]
+    sm:h-[260px]
+    lg:h-[300px]
+    w-full
+  ">
                     <AreaChart data={chartData} margin={{ left: 12, right: 12 }}>
                         <CartesianGrid vertical={false} />
 
@@ -215,8 +226,8 @@ export default PageViewAnalytics
 
 
 const Stat = ({ title, value }: { title: string; value: any }) => (
-    <div className="flex flex-col gap-1">
-        <span className="text-sm text-muted-foreground">{title}</span>
-        <span className="text-3xl font-semibold">{value}</span>
+    <div className="flex flex-col gap-1 p-2 rounded-lg border">
+        <span className="text-xs text-muted-foreground">{title}</span>
+        <span className="text-xl sm:text-2xl font-semibold">{value}</span>
     </div>
 )

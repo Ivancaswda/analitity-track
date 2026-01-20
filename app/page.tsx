@@ -1,12 +1,12 @@
 "use client"
-import React from "react";
+import React, {useState} from "react";
 import Hero from "@/components/Hero";
 import { useAuth } from "@/context/useAuth";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { UserIcon, TrendingUp } from "lucide-react";
+import {UserIcon, TrendingUp, XIcon, MenuIcon} from "lucide-react";
 
 import {
     FaDiscord,
@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis, LabelList } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import {Dialog, DialogContent} from "@/components/ui/dialog";
 
 const logoIcons = [
     { name: "ВКонтакте", icon: FaVk },
@@ -105,7 +106,7 @@ const sberConfig = {
 const HomePage = () => {
     const { user, logout } = useAuth();
     const router = useRouter();
-
+    const [mobileOpen, setMobileOpen] = useState(false);
     return (
         <div>
             {/* Hero section */}
@@ -120,9 +121,9 @@ const HomePage = () => {
                         <div>
                             <Image src="/logo.png" alt="logo" width={140} height={140} />
                         </div>
-                        <ul className="flex gap-4 text-lg items-center">
+                        <ul className=" hidden md:flex gap-4 text-lg items-center">
                             <Link href="/">
-                                <li className="hover:text-primary transition-all cursor-pointer">Главная</li>
+                                <li className="hover:text-primary   transition-all cursor-pointer">Главная</li>
                             </Link>
                             <Link href="/dashboard">
                                 <li className="hover:text-primary transition-all cursor-pointer">Панель управления</li>
@@ -131,6 +132,15 @@ const HomePage = () => {
                                 <li className="hover:text-primary transition-all cursor-pointer">Услуги</li>
                             </Link>
                         </ul>
+                        <div className="md:hidden">
+                            <Button className='md:hidden'
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setMobileOpen(true)}
+                            >
+                                <MenuIcon className="w-6 h-6" />
+                            </Button>
+                        </div>
                         {user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -145,7 +155,7 @@ const HomePage = () => {
                                         <p className="text-xs text-muted-foreground">{user.email}</p>
                                     </div>
                                     <div className="flex flex-col gap-1">
-                                        <button className="w-full text-left px-3 py-2 rounded-xl text-sm hover:bg-muted transition" onClick={() => router.push("/myProjects")}>
+                                        <button className="w-full text-left px-3 py-2 rounded-xl text-sm hover:bg-muted transition" onClick={() => router.push("/dashboard")}>
                                             Мои проекты
                                         </button>
                                         <button className="relative overflow-hidden px-3 py-2 rounded-xl text-sm font-medium text-primary-foreground bg-primary transition-all duration-300 hover:shadow-[0_0_20px_rgba(var(--primaryRgb),0.6)] hover:scale-[1.02] group" onClick={() => router.push("/pricing")}>
@@ -166,6 +176,64 @@ const HomePage = () => {
                                 Войти
                             </Button>
                         )}
+                        <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
+                            <DialogContent className="sm:hidden p-6 rounded-2xl">
+
+
+                                <nav className="flex flex-col gap-4 text-lg">
+                                    <Link href="/" onClick={() => setMobileOpen(false)}>
+                                        Главная
+                                    </Link>
+                                    <Link href="/dashboard" onClick={() => setMobileOpen(false)}>
+                                        Панель управления
+                                    </Link>
+                                    <Link href="/pricing" onClick={() => setMobileOpen(false)}>
+                                        Услуги
+                                    </Link>
+                                </nav>
+
+                                <div className="mt-6 pt-6 border-t">
+                                    {user ? (
+                                        <div className="flex items-center gap-3">
+                                            <Avatar>
+                                                <AvatarImage src={user.avatarUrl} />
+                                                <AvatarFallback>
+                                                    {user.userName[0].toUpperCase()}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <p className="font-medium">{user.userName}</p>
+                                                <p className="text-xs text-muted-foreground">{user.email}</p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <Button
+                                            className="w-full"
+                                            onClick={() => {
+                                                setMobileOpen(false);
+                                                router.replace("/sign-up");
+                                            }}
+                                        >
+                                            <UserIcon className="mr-2" /> Войти
+                                        </Button>
+                                    )}
+                                </div>
+
+                                {user && (
+                                    <Button
+                                        variant="destructive"
+                                        className="w-full mt-4"
+                                        onClick={() => {
+                                            logout();
+                                            toast.success("Вы вышли");
+                                            setMobileOpen(false);
+                                        }}
+                                    >
+                                        Выйти
+                                    </Button>
+                                )}
+                            </DialogContent>
+                        </Dialog>
                     </div>
 
                     <Hero />
@@ -191,7 +259,7 @@ const HomePage = () => {
                                         Наслаждайтесь безлимитными возможностями аналитики и отслеживанием сайтом с Analytity
                                     </p>
                                 </div>
-                                <div className="flex gap-4">
+                                <div className="flex-col md:flex-row flex gap-4">
                                     <Button className="px-6 py-3 bg-white/20 backdrop-blur-md rounded-xl font-semibold hover:bg-white/30 transition">
                                         Прикрепить новый сайт
                                     </Button>

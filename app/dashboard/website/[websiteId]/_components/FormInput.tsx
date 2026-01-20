@@ -44,36 +44,38 @@ const FormInput = ({website, setFormData}:any) => {
         setDate({from: today})
     }
 
-
-    useEffect(() => {
-        setFormData({
-            analyticType: analyticType,
-            fromDate: date?.from,
-            toDate: date?.to ?? date?.from
-        })
-    }, [date, analyticType]);
     const [refreshKey, setRefreshKey] = useState(0) // 👈 ВАЖНО
-
-    const handleRefresh = () => {
-        setRefreshKey(prev => prev + 1)
-    }
-
     useEffect(() => {
         setFormData({
             analyticType,
             fromDate: date?.from,
             toDate: date?.to ?? date?.from,
-            refreshKey, // 👈 ТРИГГЕР
+            refreshKey,
         })
     }, [date, analyticType, refreshKey])
 
 
+    const handleRefresh = () => {
+        setRefreshKey(prev => prev + 1)
+    }
+
+
+
+
     return (
-        <div className='flex items-center  justify-between'>
-            <div className='px-10 flex items-center  gap-4'>
+        <div className="
+  flex
+  flex-col
+  lg:flex-row
+  lg:items-center
+  gap-4
+  lg:justify-between
+">
+            <div className='flex flex-col sm:flex-row flex-wrap gap-3'>
 
                 <Select value={websiteId || ""}>
-                    <SelectTrigger className='w-[240px]'>
+
+                    <SelectTrigger className="w-full sm:w-[220px]">
                         <SelectValue placeholder='Выбрать вебсайт'/>
                     </SelectTrigger>
 
@@ -93,7 +95,12 @@ const FormInput = ({website, setFormData}:any) => {
 
                 <Popover>
                     <PopoverTrigger asChild={true} >
-                        <Button variant='outline' data-empty={!date} className={` ${date.to ? 'w-[380px]' : 'w-[140px]'} data-[empty=true]:text-muted-foreground flex-wrap flex-1`}>
+                        <Button variant='outline' data-empty={!date} className="
+  w-full
+  sm:w-[240px]
+  lg:w-auto
+  flex justify-start gap-2
+">
                             <CalendarIcon/>
                             {date?.from ? (
                                 date?.to ? (<>
@@ -140,13 +147,13 @@ const FormInput = ({website, setFormData}:any) => {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button onClick={handleRefresh} variant='outline'>
-                    <RefreshCcw/>
+                <Button onClick={handleRefresh} variant="outline" className="w-full sm:w-auto">
+                    <RefreshCcw />
                 </Button>
             </div>
-            <Link href={`/dashboard/website/${websiteId}/settings`} >
-                <Button variant='outline'>
-                    <SettingsIcon/>
+            <Link href={`/dashboard/website/${websiteId}/settings`}>
+                <Button variant="outline" className="w-full sm:w-auto">
+                    <SettingsIcon />
                 </Button>
             </Link>
 

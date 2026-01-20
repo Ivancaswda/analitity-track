@@ -171,7 +171,7 @@ const Hero = () => {
                     источники трафика, устройства, посетители и многое другое.
                 </p>
 
-                <div className='mt-5 w-[850px] mx-auto'>
+                <div className='mt-5 max-w-[850px] mx-auto'>
                     <Card>
 
                         <CardContent>
@@ -265,8 +265,9 @@ const Hero = () => {
                                         </SelectContent>
                                     </Select>
                                     <div className='mt-5 flex items-center justify-between '>
-                <div className=' flex items-center gap-3 '>
-                    <Checkbox onCheckedChange={(val:boolean) => setEnableLocalhostTracking(val)} required={true}/> <span>Разрешить localhost отслеживание в дев моде</span>
+                <div className=' flex items-center gap-1 '>
+                    <Checkbox onCheckedChange={(val:boolean) => setEnableLocalhostTracking(val)} required={true}/>
+                    <span className='text-sm'>Разрешить localhost отслеживание в дев моде</span>
                 </div>
                                         <Button disabled={loading} size='icon' className=' mt-5'>
                                             {loading ? <Loader2Icon className='animate-spin' /> :

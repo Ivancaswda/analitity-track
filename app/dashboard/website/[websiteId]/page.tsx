@@ -25,9 +25,14 @@ const WebsitePage = () => {
        getWebsiteInfo()
     }, []);
     useEffect(() => {
-        if (!websiteId || !formData?.fromDate) return
+        if (!websiteId || !formData.fromDate) return
         getWebsiteAnalyticalInfo()
-    }, [websiteId, formData])
+    }, [
+        websiteId,
+        formData.fromDate,
+        formData.toDate,
+        formData.analyticType
+    ])
     console.log(formData)
     const getWebsiteInfo = async () => {
         try {
@@ -42,14 +47,19 @@ const WebsitePage = () => {
     const getWebsiteAnalyticalInfo = async () => {
         try {
             setLoading(true)
-            const fromDate =  format(formData?.fromDate, "yyyy-MM-dd", {locale: ru});
-            const toDate = formData?.toDate ? format(formData?.toDate, "yyyy-MM-dd", {locale: ru}) : fromDate
+            const fromDate = formData.fromDate.getTime()
 
+            const toDate = formData.toDate
+                ? new Date(formData.toDate.getTime())
+                    .setHours(23, 59, 59, 999)
+                : fromDate
             const result = await axios.get(
                 `/api/website/getOne?websiteId=${websiteId}&from=${fromDate}&to=${toDate}`
             )
+            console.log('resultData===')
+            console.log(result.data)
             setWebsiteInfo(result.data.data)
-            getLiveUsers()
+
             setLoading(false)
         } catch (error) {
 toast.error('failed to get website')
@@ -57,16 +67,8 @@ toast.error('failed to get website')
             setLoading(false)
         }
     }
-    const getLiveUsers =async () => {
-        try {
-            const result = await axios.get(`/api/live/get?websiteId=${websiteId}`)
 
-            setLiveUsers(result.data.activeUsers)
-        } catch (error) {
-            console.log(error)
-            toast.error('failed to get live users')
-        }
-    }
+
     console.log('liveUsers===')
     console.log(liveUsers)
 
@@ -74,7 +76,16 @@ toast.error('failed to get website')
     console.log('websiteInfo===')
     console.log(websiteInfo)
     return (
-        <div className='px-10 md:px-14 lg:px-16 xl:px-16 mt-10 flex flex-col gap-4'>
+        <div className="
+  px-4
+  sm:px-6
+  md:px-10
+  lg:px-14
+  xl:px-16
+  mt-6
+  sm:mt-10
+  flex flex-col gap-6
+">
             <FormInput setFormData={setFormData} website={websites}/>
             <PageViewAnalytics liveUserCount={liveUsers?.length} analyticType={formData?.analyticType} loading={loading} websiteInfo={websiteInfo}/>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-5 mt-5'>

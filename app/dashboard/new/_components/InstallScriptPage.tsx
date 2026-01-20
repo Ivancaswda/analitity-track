@@ -22,13 +22,7 @@ export default function InstallScriptPage() {
 
     return (
         <div className="max-w-xl mx-auto mt-10">
-            <Button
-                variant="ghost"
-                className="mb-4 flex items-center gap-2"
-                onClick={() => router.push("/dashboard")}
-            >
-                <ArrowLeft className="w-4 h-4" /> Панель управления
-            </Button>
+
 
             <Card className="rounded-xl">
                 <CardHeader>

@@ -65,11 +65,11 @@ export default function SignUpForm() {
                     transition={{duration: 0.8, ease: "easeOut"}}
                     className="hidden md:block rounded-xl bg-white"
                 >
-                    <Image src={'/logo.png'} width={500} height={500} alt="Analytity Logo"/>
+                    <Image src={'/logo.png'} width={800} height={800} alt="Analytity Logo"/>
                 </motion.div>
 
-                {/* Правая часть с формой */}
-                <div className="w-full md:w-1/2 bg-gray-900 p-8 rounded-xl shadow-lg">
+
+                <div className="w-full md:w-2/3 bg-gray-900 p-8 rounded-xl shadow-lg">
                     <form onSubmit={handleRegister} className="space-y-6 w-full">
                         <h2 className="text-3xl font-bold text-primary text-center md:text-left">Регистрация</h2>
                         <p className="text-gray-400 text-center md:text-left">Создайте аккаунт Analytity</p>

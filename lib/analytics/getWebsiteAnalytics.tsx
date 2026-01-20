@@ -22,23 +22,25 @@ export async function getWebsiteAnalytics(
         eq(pageViewTable.websiteId, site.websiteId),
     ]
 
-    /* ---------- фильтр по дате (MS) ---------- */
     if (range?.from) {
-        const fromTs = new Date(range.from).getTime()
-        whereConditions.push(
-            gte(pageViewTable.entryTime, fromTs)
-        )
+        const fromTs = Number(range.from)
+
+        if (!Number.isNaN(fromTs)) {
+            whereConditions.push(
+                gte(pageViewTable.entryTime, fromTs)
+            )
+        }
     }
 
     if (range?.to) {
-        const toDate = new Date(range.to)
-        toDate.setHours(23, 59, 59, 999)
+        const toTs = Number(range.to)
 
-        whereConditions.push(
-            lte(pageViewTable.entryTime, toDate.getTime())
-        )
+        if (!Number.isNaN(toTs)) {
+            whereConditions.push(
+                lte(pageViewTable.entryTime, toTs)
+            )
+        }
     }
-
     const views = await db
         .select()
         .from(pageViewTable)
@@ -149,6 +151,7 @@ export async function getWebsiteAnalytics(
         if (v.os) osCount[v.os] = (osCount[v.os] || 0) + 1
         if (v.browser) browserCount[v.browser] = (browserCount[v.browser] || 0) + 1
     })
+
 
     /* ---------- return ---------- */
     return {
