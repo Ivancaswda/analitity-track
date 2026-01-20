@@ -2,6 +2,9 @@
 (function (){
     console.log('Скрипт для аналитики загружен!')
     const NODE_ENV ='production'
+    const TRACK_URL = NODE_ENV === 'production'
+        ? 'https://analytity-track.vercel.app/api/track'
+        : 'http://localhost:3000/api/track';
     function generateUUID() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 9)
     }
@@ -53,12 +56,13 @@
         utm_campaign,
         refParams
     }
-    fetch(NODE_ENV === 'production' ? 'https://analytity-track.vercel.app' : 'http://localhost:3000' + "/api/track", {
+    fetch(TRACK_URL, {
         method: 'POST',
         headers: {
             "Content-Type": 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
+        mode: "cors"
     })
 
 
@@ -70,7 +74,7 @@
         const exitTime = Date.now();
         totalActiveTime += Date.now()-activeStartTime;
 
-        fetch(NODE_ENV === 'production' ? 'https://analytity-track.vercel.app' : 'http://localhost:3000' +'/api/track', {
+        fetch(TRACK_URL, {
             method: 'POST',
             keepalive: true,
             headers: {
@@ -83,7 +87,8 @@
                 exitTime,
                 totalActiveTime,
                 visitorId
-            })
+            }),
+            mode: "cors"
         })
 
        // localStorage.clear()
@@ -91,7 +96,7 @@
     window.addEventListener('beforeunload', handleExit)
 
     const sendLivePing = () => {
-        fetch(NODE_ENV === 'production' ? 'https://analytity-track.vercel.app' : 'http://localhost:3000' +'/api/track', {
+        fetch(TRACK_URL, {
             method: 'POST',
             headers: {'Content-Type': "application/json"},
             body: JSON.stringify({
@@ -100,7 +105,8 @@
                 last_seen: Date.now(),
                 url: window.location.href,
                 type: "ping"
-            })
+            }),
+            mode: "cors"
         })
     }
 

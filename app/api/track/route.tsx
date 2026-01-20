@@ -7,18 +7,19 @@ import {UAParser} from 'ua-parser-js'
 import {eq, and, isNull} from "drizzle-orm";
 
 const CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": "*", // или твой домен 'https://teethify-ai.vercel.app' для безопасности
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type"
-
-}
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
 export async function OPTIONS(req: NextRequest) {
-
-        return new NextResponse(null, {
-            status: 204,
-            headers: CORS_HEADERS
-        })
-
+    return new NextResponse(null, {
+        status: 204, // No Content
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+    });
 }
 
 
