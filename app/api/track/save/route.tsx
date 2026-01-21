@@ -7,7 +7,7 @@ import { and, eq, isNull } from "drizzle-orm"
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json()
-
+        console.log('db-body.type', body.type)
         if (body.type === "entry") {
             await db.insert(pageViewTable).values({
                 visitorId: body.visitorId,
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
                 url: body.url,
                 referrer: body.referrer,
                 entryTime: body.entryTime,
-
+                type: body.type,
                 utm_source: body.utm_source,
                 utm_medium: body.utm_medium,
                 utm_campaign: body.utm_campaign,

@@ -32,14 +32,16 @@ export async function POST(req: NextRequest) {
             req.headers.get("x-forwarded-for")?.split(",")[0] ||
             req.headers.get("x-real-ip") ||
             ""
-
+        console.log('body-type===', body.type)
         // ping не сохраняем
         if (body.type === "ping") {
             return NextResponse.json({ success: true }, { headers: CORS_HEADERS })
         }
 
+
+        const origin = req.nextUrl.origin
         // прокидываем ВСЁ дальше
-        await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/track/save`, {
+        await fetch(`${origin}/api/track/save`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
