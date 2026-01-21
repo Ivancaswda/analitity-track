@@ -180,7 +180,18 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <ChartTooltip content={<CustomTooltip />} />
 
-                                    <Bar dataKey="visitors" radius={4} />
+                                    <Bar
+                                        dataKey="visitors"
+                                        fill="primary"
+                                        radius={[6, 6, 6, 6]}
+                                        barSize={18}
+                                    >
+                                        <LabelList
+                                            dataKey="visitors"
+                                            position="right"
+                                            className="fill-muted-foreground text-xs"
+                                        />
+                                    </Bar>
                                 </BarChart>
                             </ChartContainer>
                         )}
@@ -244,7 +255,18 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <ChartTooltip content={<CustomTooltip />} />
 
-                                    <Bar  dataKey="visitors" radius={4} />
+                                    <Bar
+                                        dataKey="visitors"
+                                        fill="primary"
+                                        radius={[6, 6, 6, 6]}
+                                        barSize={18}
+                                    >
+                                        <LabelList
+                                            dataKey="visitors"
+                                            position="right"
+                                            className="fill-muted-foreground text-xs"
+                                        />
+                                    </Bar>
                                 </BarChart>
                             </ChartContainer>
                         )}
@@ -269,7 +291,18 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <ChartTooltip content={<CustomTooltip />} />
 
-                                    <Bar dataKey="visitors" radius={4} />
+                                    <Bar
+                                        dataKey="visitors"
+                                        fill="primary"
+                                        radius={[6, 6, 6, 6]}
+                                        barSize={18}
+                                    >
+                                        <LabelList
+                                            dataKey="visitors"
+                                            position="right"
+                                            className="fill-muted-foreground text-xs"
+                                        />
+                                    </Bar>
                                 </BarChart>
                             </ChartContainer>
                         )}
@@ -294,7 +327,18 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <ChartTooltip content={<CustomTooltip />} />
 
-                                    <Bar dataKey="visitors" radius={4} />
+                                    <Bar
+                                        dataKey="visitors"
+                                        fill="primary"
+                                        radius={[6, 6, 6, 6]}
+                                        barSize={18}
+                                    >
+                                        <LabelList
+                                            dataKey="visitors"
+                                            position="right"
+                                            className="fill-muted-foreground text-xs"
+                                        />
+                                    </Bar>
                                 </BarChart>
                             </ChartContainer>
                         )}
@@ -339,7 +383,18 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <ChartTooltip content={<CustomTooltip />} />
 
-                                    <Bar dataKey="visitors" radius={4} />
+                                    <Bar
+                                        dataKey="visitors"
+                                        fill="primary"
+                                        radius={[6, 6, 6, 6]}
+                                        barSize={18}
+                                    >
+                                        <LabelList
+                                            dataKey="visitors"
+                                            position="right"
+                                            className="fill-muted-foreground text-xs"
+                                        />
+                                    </Bar>
                                 </BarChart>
                             </ChartContainer>
                         )}
@@ -364,7 +419,18 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <ChartTooltip content={<CustomTooltip />} />
 
-                                    <Bar dataKey="visitors" radius={4} />
+                                    <Bar
+                                        dataKey="visitors"
+                                        fill="primary"
+                                        radius={[6, 6, 6, 6]}
+                                        barSize={18}
+                                    >
+                                        <LabelList
+                                            dataKey="visitors"
+                                            position="right"
+                                            className="fill-muted-foreground text-xs"
+                                        />
+                                    </Bar>
                                 </BarChart>
                             </ChartContainer>
                         )}
@@ -389,7 +455,18 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <ChartTooltip content={<CustomTooltip />} />
 
-                                    <Bar dataKey="visitors" radius={4} />
+                                    <Bar
+                                        dataKey="visitors"
+                                        fill="primary"
+                                        radius={[6, 6, 6, 6]}
+                                        barSize={18}
+                                    >
+                                        <LabelList
+                                            dataKey="visitors"
+                                            position="right"
+                                            className="fill-muted-foreground text-xs"
+                                        />
+                                    </Bar>
                                 </BarChart>
                             </ChartContainer>
                         )}
