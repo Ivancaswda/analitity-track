@@ -182,7 +182,7 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <Bar
                                         dataKey="visitors"
-                                        fill="primary"
+                                        fill="yellow"
                                         radius={[6, 6, 6, 6]}
                                         barSize={18}
                                     >
@@ -257,7 +257,7 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <Bar
                                         dataKey="visitors"
-                                        fill="primary"
+                                        fill="yellow"
                                         radius={[6, 6, 6, 6]}
                                         barSize={18}
                                     >
@@ -293,7 +293,7 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <Bar
                                         dataKey="visitors"
-                                        fill="primary"
+                                        fill="yellow"
                                         radius={[6, 6, 6, 6]}
                                         barSize={18}
                                     >
@@ -329,7 +329,7 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <Bar
                                         dataKey="visitors"
-                                        fill="primary"
+                                        fill="yellow"
                                         radius={[6, 6, 6, 6]}
                                         barSize={18}
                                     >
@@ -385,7 +385,7 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <Bar
                                         dataKey="visitors"
-                                        fill="primary"
+                                        fill="yellow"
                                         radius={[6, 6, 6, 6]}
                                         barSize={18}
                                     >
@@ -421,7 +421,7 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <Bar
                                         dataKey="visitors"
-                                        fill="primary"
+                                        fill="yellow"
                                         radius={[6, 6, 6, 6]}
                                         barSize={18}
                                     >
@@ -457,7 +457,7 @@ const SourceWidget = ({ websiteInfo, loading }: any) => {
 
                                     <Bar
                                         dataKey="visitors"
-                                        fill="primary"
+                                        fill="yellow"
                                         radius={[6, 6, 6, 6]}
                                         barSize={18}
                                     >
